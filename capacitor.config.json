@@ -1,0 +1,13 @@
+{
+  "appId": "com.mysimplestart.app",
+  "appName": "Capacitor Starter",
+  "webDir": "public",
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": true
+    },
+    "CapacitorCookies": {
+      "enabled": true
+    }
+  }
+}

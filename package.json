@@ -1,0 +1,25 @@
+{
+  "name": "capacitor-starter",
+  "version": "1.0.0",
+  "description": "Template Starter Kosongan untuk Aplikasi Capacitor 7 Android dengan GitHub Actions APK Builder",
+  "main": "public/index.html",
+  "scripts": {
+    "cap:sync": "npx cap sync android",
+    "cap:open": "npx cap open android"
+  },
+  "keywords": ["capacitor", "android", "template", "starter"],
+  "author": "berusigma",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "@capacitor/android": "^7.6.8",
+    "@capacitor/app": "^7.1.2",
+    "@capacitor/cli": "^7.6.8",
+    "@capacitor/clipboard": "^7.0.4",
+    "@capacitor/core": "^7.6.8",
+    "@capacitor/filesystem": "^7.1.8",
+    "@capacitor/haptics": "^7.0.0",
+    "@capacitor/network": "^7.0.4",
+    "@capacitor/share": "^7.0.4"
+  }
+}

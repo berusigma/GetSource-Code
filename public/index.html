@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Capacitor 7 Starter App</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- HEADER -->
+    <header class="app-header">
+      <div class="logo-box">
+        <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+          <polyline points="2 17 12 22 22 17"></polyline>
+          <polyline points="2 12 12 17 22 12"></polyline>
+        </svg>
+      </div>
+      <div>
+        <h1 class="app-title">CAPACITOR 7 STARTER</h1>
+        <p class="app-subtitle">Hybrid Android Template Ready for GitHub Actions</p>
+      </div>
+    </header>
+
+    <!-- CONTENT CARD -->
+    <main class="card-container">
+      <div class="status-banner">
+        <span class="status-dot"></span>
+        <span>Aplikasi Siap Digunakan!</span>
+      </div>
+
+      <p class="intro-text">
+        Ini adalah starter template kosongan Capacitor 7. Edit file di folder <code>public/</code> untuk mulai membuat aplikasi Anda.
+      </p>
+
+      <!-- TEST BUTTONS -->
+      <div class="button-group">
+        <button id="btnHapticTest" class="btn-primary">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+          Tes Getar (Haptic)
+        </button>
+
+        <button id="btnCopyTest" class="btn-secondary">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          Salin Teks (Clipboard)
+        </button>
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="app-footer">
+      <p>Powered by <strong>Capacitor 7</strong> & <strong>GitHub Actions</strong></p>
+    </footer>
+
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
