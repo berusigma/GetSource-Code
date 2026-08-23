@@ -1,13 +1,16 @@
 {
   "name": "capacitor-starter",
   "version": "1.0.0",
-  "description": "Template Starter Kosongan untuk Aplikasi Capacitor 7 Android dengan GitHub Actions APK Builder",
+  "description": "Multi-Platform Template Starter (Android, iOS & Windows) dengan GitHub Actions Builder",
   "main": "public/index.html",
   "scripts": {
-    "cap:sync": "npx cap sync android",
-    "cap:open": "npx cap open android"
+    "cap:sync": "node node_modules/@capacitor/cli/bin/capacitor sync",
+    "cap:open:android": "node node_modules/@capacitor/cli/bin/capacitor open android",
+    "cap:open:ios": "node node_modules/@capacitor/cli/bin/capacitor open ios",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build"
   },
-  "keywords": ["capacitor", "android", "template", "starter"],
+  "keywords": ["capacitor", "android", "ios", "windows", "tauri", "template"],
   "author": "berusigma",
   "license": "MIT",
   "type": "module",
@@ -18,8 +21,12 @@
     "@capacitor/clipboard": "^7.0.4",
     "@capacitor/core": "^7.6.8",
     "@capacitor/filesystem": "^7.1.8",
-    "@capacitor/haptics": "^7.0.0",
+    "@capacitor/haptics": "^7.0.5",
+    "@capacitor/ios": "^7.6.8",
     "@capacitor/network": "^7.0.4",
     "@capacitor/share": "^7.0.4"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.11.4"
   }
 }
