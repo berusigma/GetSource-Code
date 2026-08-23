@@ -1,63 +1,128 @@
-# 🚀 Multi-Platform Starter Template (Android, iOS & Windows)
+# 🚀 Capacitor 7 Hybrid Starter Template (Android & iOS / iPhone)
 
-Template starter kosongan berbasis **Capacitor 7** & **Tauri** untuk membangun aplikasi lintas platform (**Android**, **iOS/iPhone**, dan **Windows Desktop**) dengan otomatisasi build gratis berbasis **GitHub Actions**.
+Template starter kosongan berbasis **Capacitor 7** untuk membuat aplikasi mobile lintas platform (**Android** dan **iOS / iPhone**) dengan **Single Codebase** dan **Otomatisasi Build Gratis via GitHub Actions**.
 
 ---
 
-## 📁 Struktur Direktori
+## 🌟 Konsep Utama: Single Codebase (Tulis 1x untuk Semua OS)
+
+> **Sangat Mudah & Tidak Ribet!**  
+> Anda **HANYA PERLU MENULIS KODE 1 KALI SAJA** di dalam folder `public/` (HTML, CSS, dan JavaScript).  
+> Anda **TIDAK PERLU** menyalin atau memindahkan kode secara manual ke dalam direktori `android/` atau `ios/`.  
+> 
+> Saat Anda menjalankan perintah `npx cap sync` atau melakukan `git push` ke GitHub, sistem Capacitor secara otomatis menyalin seluruh file dari folder `public/` ke dalam direktori Android dan iOS!
+
+---
+
+## 📁 Struktur Direktori Projek
 
 ```text
 capacitor-starter/
 ├── .github/
 │   └── workflows/
-│       └── build-all-platforms.yml   # Workflow GitHub Actions untuk Android, iOS, & Windows
-├── android/                           # Folder native Android (Gradle)
-├── ios/                               # Folder native iOS (Xcode)
-├── src-tauri/                         # Folder native Windows (Rust + Tauri)
-├── public/                            # Frontend Web utama (HTML, CSS, JS)
-│   ├── index.html
-│   ├── style.css
-│   └── app.js
-├── capacitor.config.json              # Konfigurasi Capacitor
-├── package.json                       # Dependency & skrip npm
-└── README.md
+│       └── build-all-platforms.yml   # Script GitHub Actions untuk build APK Android & iOS otomatis
+├── android/                           # Folder native Android (Android Studio / Gradle)
+├── ios/                               # Folder native iOS (Xcode / CocoaPods)
+├── public/                            # tempat utama koding aplikasi Anda (Single Codebase)
+│   ├── index.html                     # Halaman web/UI utama
+│   ├── style.css                      # Styling CSS
+│   └── app.js                         # Logika JavaScript & interaksi plugin HP
+├── capacitor.config.json              # Konfigurasi Nama Aplikasi & App ID (Package Name)
+├── package.json                       # Daftar dependency & plugin npm
+└── README.md                          # Panduan penggunaan ini
 ```
 
 ---
 
-## 🌐 Dukungan Multi-Platform
+## 📱 Panduan Penggunaan Langkah demi Langkah
 
-| Platform | Teknologi | Runner GitHub Actions | Output Build |
-|---|---|---|---|
-| **Android** | Capacitor 7 + Gradle | `ubuntu-latest` | `.apk` (Android Package) |
-| **iOS / iPhone** | Capacitor 7 + Xcode | `macos-latest` | `.app` / `.ipa` (Xcode Build) |
-| **Windows** | Tauri 2.0 + Rust | `windows-latest` | `.exe` / `.msi` (Windows Installer) |
-
----
-
-## ⚡ Cara Menggunakan Template Ini
-
-### 1. Edit Kode Frontend Web Anda
-Cukup ubah file di folder `public/`:
-- `public/index.html` — Struktur Halaman
-- `public/style.css` — Styling & Theme
-- `public/app.js` — Logika Aplikasi & Plugin Native
-
-### 2. Sinkronkan Perubahan
+### Langkah 1: Kloning / Download Repository Ini
 ```bash
-# Sync ke Android & iOS
-node node_modules/@capacitor/cli/bin/capacitor sync
+git clone https://github.com/berusigma/capacitor-starter.git nama-aplikasi-kamu
+cd nama-aplikasi-kamu
+npm install
 ```
 
-### 3. Push ke GitHub & Otomatis Build 3 OS
-Push kode Anda ke GitHub:
+---
+
+### Langkah 2: Ubah Nama Aplikasi & Package ID (App ID)
+Buka file `capacitor.config.json` dan sesuaikan dengan identitas aplikasi baru Anda:
+```json
+{
+  "appId": "com.namakamu.namaplikasi",
+  "appName": "Nama Aplikasi Kamu",
+  "webDir": "public"
+}
+```
+> **Catatan App ID**: `appId` harus unik menggunakan format domain terbalik, contoh: `com.perusahaan.namaapp`.
+
+---
+
+### Langkah 3: Mulai Koding Aplikasi Anda (Folder `public/`)
+Cukup edit file yang ada di dalam folder `public/`:
+* Edit `public/index.html` untuk menambahkan tombol, input, dan elemen UI.
+* Edit `public/style.css` untuk mengubah warna, font, dan animasi tampilan.
+* Edit `public/app.js` untuk menambahkan logika JavaScript dan fitur native.
+
+---
+
+### Langkah 4: Sinkronkan Perubahan ke Folder Native Android & iOS
+Setiap kali Anda selesai menambah/mengubah kode di folder `public/`, jalankan perintah sync di terminal:
+```bash
+npx cap sync
+```
+*Perintah di atas akan otomatis menyalin seluruh isi `public/` ke folder `android/` dan `ios/` tanpa perlu memindahkan file manual.*
+
+---
+
+### Langkah 5: Push ke GitHub & Otomatis Build APK Android & iOS App
+
+Push seluruh kode Anda ke repository GitHub Anda:
 ```bash
 git add .
-git commit -m "feat: Update multi-platform starter app"
+git commit -m "feat: Tambah fitur aplikasi baru"
 git push origin main
 ```
 
-Buka tab **Actions** di repository GitHub Anda. GitHub Actions akan secara otomatis menjalankan 3 server bersamaan (Ubuntu, macOS, Windows) dan menghasilkan installer untuk ketiga OS tersebut! 📱💻🚀
+1. Buka halaman repository Anda di GitHub, lalu klik tab **Actions**.
+2. Pilih workflow **Build Multi-Platform Apps**.
+3. GitHub Actions akan otomatis menyalakan 2 server virtual secara bersamaan:
+   * **Ubuntu Server**: Mengompilasi APK Android Release bertanda tangan digital (Signed).
+   * **macOS Xcode Server**: Mengompilasi projek iOS / iPhone untuk Xcode.
+4. Setelah proses build selesai (berwarna hijau centang), klik pada hasil run untuk mengunduh **APK Android** dan **iOS Archive**! 🎁
+
+---
+
+## 🛠️ Solusi Eror "Paket Tampaknya Tidak Valid" pada Android
+
+Aplikasi ini sudah dilengkapi dengan **Keystore Release Digital Signature** bawaan di file `android/app/build.gradle`:
+
+```groovy
+signingConfigs {
+    release {
+        storeFile file('release.keystore')
+        storePassword 'android123'
+        keyAlias 'rysav'
+        keyPassword 'android123'
+    }
+}
+```
+
+Sehingga APK Release yang dihasilkan oleh GitHub Actions **sudah 100% bertanda tangan digital valid** dan **dapat diinstall langsung di semua HP Android tanpa mengalami kendala "Paket tidak valid"**.
+
+---
+
+## 🔌 Cara Menambahkan Plugin Native HP Tambahan
+
+Jika aplikasi Anda membutuhkan fitur HP seperti Kamera, GPS, Getaran, Penyimpanan, dll:
+
+```bash
+# 1. Contoh: Install plugin Kamera dan Geolocation
+npm install @capacitor/camera @capacitor/geolocation
+
+# 2. Sinkronkan plugin ke Android & iOS
+npx cap sync
+```
 
 ---
 
