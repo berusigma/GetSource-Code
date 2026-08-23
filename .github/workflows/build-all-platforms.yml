@@ -1,4 +1,4 @@
-name: Build Multi-Platform Apps (Android, iOS & Windows)
+name: Build Multi-Platform Apps (Android, iOS IPA, macOS & Windows)
 
 on:
   push:
@@ -40,7 +40,7 @@ jobs:
             keytool -genkey -v -keystore android/app/release.keystore -alias rysav -keyalg RSA -keysize 2048 -validity 10000 -storepass android123 -keypass android123 -dname "CN=CapacitorApp, OU=App, O=Starter, L=City, S=State, C=ID"
           fi
 
-      - name: Build Android Release APK
+      - name: Build Android Signed Release APK
         run: |
           cd android
           chmod +x gradlew
@@ -53,10 +53,10 @@ jobs:
           path: android/app/build/outputs/apk/release/*.apk
 
   # ==========================================
-  # 2. BUILD IOS APP (macOS)
+  # 2. BUILD IOS IPA PACKAGE (macOS)
   # ==========================================
   build-ios:
-    name: Build iOS Xcode Project
+    name: Build iOS IPA Package
     runs-on: macos-latest
     steps:
       - name: Checkout repository
@@ -76,16 +76,57 @@ jobs:
 
       - name: Build iOS App via Xcode
         run: |
-          xcodebuild -workspace ios/App/App.xcworkspace -scheme App -configuration Release -derivedDataPath ios/build CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
+          xcodebuild -workspace ios/App/App.xcworkspace -scheme App -configuration Release -sdk iphoneos -derivedDataPath ios/build CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
 
-      - name: Upload iOS Xcode Archive
+      - name: Package App into .IPA File
+        run: |
+          mkdir -p ios/Payload
+          cp -r ios/build/Build/Products/Release-iphoneos/App.app ios/Payload/
+          cd ios
+          zip -r CapacitorApp.ipa Payload
+          cd ..
+
+      - name: Upload iOS IPA Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: CapacitorApp-iOS-Build
-          path: ios/build/Build/Products/Release-iphoneos/*.app
+          name: CapacitorApp-iOS-IPA
+          path: ios/CapacitorApp.ipa
 
   # ==========================================
-  # 3. BUILD WINDOWS EXE INSTALLER (Windows)
+  # 3. BUILD MACOS DESKTOP APP (macOS)
+  # ==========================================
+  build-macos:
+    name: Build macOS Desktop App (.dmg / .app)
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Rust Stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install dependencies
+        run: npm ci || npm install
+
+      - name: Build macOS App (Tauri)
+        run: npx tauri build
+
+      - name: Upload macOS App Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: CapacitorApp-macOS-Desktop
+          path: |
+            src-tauri/target/release/bundle/dmg/*.dmg
+            src-tauri/target/release/bundle/macos/*.app
+
+  # ==========================================
+  # 4. BUILD WINDOWS EXE INSTALLER (Windows)
   # ==========================================
   build-windows:
     name: Build Windows EXE (Tauri)
