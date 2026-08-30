@@ -1,5 +1,7 @@
 /**
- * RSOURCE — Sleek Mobile-First Source Extractor Engine & Blob Download Engine
+ * RSOURCE — Professional Website Source Code Extractor
+ * Direct Browser Redirect & Real ZIP Download Engine
+ * Clean Code - No Emojis - No Parentheses
  */
 
 // State Management
@@ -20,7 +22,7 @@ const state = {
   wrapLines: false
 };
 
-// UI Elements
+// UI Cache
 const elements = {
   fetchForm: document.getElementById('fetchForm'),
   urlInput: document.getElementById('urlInput'),
@@ -36,10 +38,10 @@ const elements = {
   toastContainer: document.getElementById('toastContainer'),
   
   // Tabs
-  tabBtns: document.querySelectorAll('.tab-btn'),
-  tabContents: document.querySelectorAll('.tab-content'),
+  tabBtns: document.querySelectorAll('.tab-item'),
+  tabContents: document.querySelectorAll('.tab-pane'),
   
-  // Badges & Stats
+  // Stats
   badgeHtml: document.getElementById('badgeHtml'),
   badgeScripts: document.getElementById('badgeScripts'),
   badgeStyles: document.getElementById('badgeStyles'),
@@ -91,7 +93,7 @@ const elements = {
   searchHtmlInput: document.getElementById('searchHtml')
 };
 
-// Haptic helper
+// Haptic feedback
 async function triggerHaptic() {
   try {
     if (window.Capacitor && window.Capacitor.isPluginAvailable("Haptics")) {
@@ -100,7 +102,7 @@ async function triggerHaptic() {
   } catch (e) {}
 }
 
-// Toast helper
+// Toast notification without emojis
 function showToast(message, type = 'info') {
   const toast = document.createElement('div');
   toast.className = `toast ${type}`;
@@ -192,14 +194,14 @@ async function fetchWithProxy(targetUrl, selectedProxy) {
     }
   }
 
-  throw new Error(lastError ? lastError.message : 'Gagal mengakses URL.');
+  throw new Error(lastError ? lastError.message : 'Failed to fetch URL through proxies.');
 }
 
 // MAIN EXTRACTION
 async function extractWebsiteSource(rawUrl) {
   const targetUrl = normalizeUrl(rawUrl);
   if (!targetUrl) {
-    showToast('Masukkan URL website yang valid!', 'error');
+    showToast('Please enter a valid website URL', 'error');
     return;
   }
 
@@ -212,11 +214,11 @@ async function extractWebsiteSource(rawUrl) {
 
   state.isFetching = true;
   elements.btnFetch.disabled = true;
-  elements.btnFetch.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> <span>Mengestrak...</span>';
+  elements.btnFetch.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> <span>Extracting...</span>';
   
   elements.statusBanner.className = 'status-banner loading';
   elements.statusIcon.className = 'fa-solid fa-circle-notch fa-spin';
-  elements.statusMessage.innerText = `Sedang mengekstrak ${state.parsedDomain}...`;
+  elements.statusMessage.innerText = `Extracting source code from ${state.parsedDomain}...`;
   elements.statusTags.innerHTML = '';
 
   triggerHaptic();
@@ -233,7 +235,7 @@ async function extractWebsiteSource(rawUrl) {
     state.title = doc.title || state.parsedDomain;
 
     state.metadata = {
-      description: doc.querySelector('meta[name="description"]')?.content || doc.querySelector('meta[property="og:description"]')?.content || 'Tidak ada deskripsi meta.',
+      description: doc.querySelector('meta[name="description"]')?.content || doc.querySelector('meta[property="og:description"]')?.content || 'No meta description found.',
       keywords: doc.querySelector('meta[name="keywords"]')?.content || '-',
       ogImage: doc.querySelector('meta[property="og:image"]')?.content || '',
       favicon: doc.querySelector('link[rel*="icon"]')?.href || resolveAbsoluteUrl('/favicon.ico', targetUrl)
@@ -256,7 +258,7 @@ async function extractWebsiteSource(rawUrl) {
           type: 'external',
           url: absSrc,
           name: fileName,
-          content: `// External Script URL: ${absSrc}\n// Klik tab untuk mengambil isi skrip.`,
+          content: `// External Script URL: ${absSrc}\n// Click tab to fetch contents.`,
           fetched: false
         });
       } else if (el.textContent.trim()) {
@@ -264,7 +266,7 @@ async function extractWebsiteSource(rawUrl) {
         state.scripts.push({
           type: 'inline',
           url: '',
-          name: `Inline Script #${inlineJsCount}`,
+          name: `Inline Script ${inlineJsCount}`,
           content: el.textContent.trim(),
           fetched: true
         });
@@ -298,14 +300,14 @@ async function extractWebsiteSource(rawUrl) {
         state.styles.push({
           type: 'inline',
           url: '',
-          name: `Inline Style #${inlineCssCount}`,
+          name: `Inline Style ${inlineCssCount}`,
           content: styleElements[i].textContent.trim(),
           fetched: true
         });
       }
     }
 
-    // Extract Media Assets
+    // Extract Media
     state.media = [];
     const imgElements = doc.querySelectorAll('img[src]');
     imgElements.forEach((img, idx) => {
@@ -319,7 +321,7 @@ async function extractWebsiteSource(rawUrl) {
 
     const svgElements = doc.querySelectorAll('svg');
     svgElements.forEach((svg, idx) => {
-      state.media.push({ type: 'svg', url: '#svg', name: `Inline SVG #${idx + 1}` });
+      state.media.push({ type: 'svg', url: '#svg', name: `Inline SVG ${idx + 1}` });
     });
 
     if (state.metadata.favicon) {
@@ -328,9 +330,9 @@ async function extractWebsiteSource(rawUrl) {
 
     elements.statusBanner.className = 'status-banner success';
     elements.statusIcon.className = 'fa-solid fa-circle-check';
-    elements.statusMessage.innerText = `Ekstraksi ${state.parsedDomain} selesai!`;
+    elements.statusMessage.innerText = `Extracted ${state.parsedDomain} successfully.`;
     elements.statusTags.innerHTML = `
-      <span class="status-tag">HTTP 200 OK</span>
+      <span class="status-tag">Status 200 OK</span>
       <span class="status-tag">${fetchResult.duration} ms</span>
       <span class="status-tag">${formatBytes(state.htmlRaw.length)}</span>
     `;
@@ -351,18 +353,18 @@ async function extractWebsiteSource(rawUrl) {
     elements.inspectorCard.classList.add('active');
     elements.inspectorCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-    showToast(`Source code ${state.parsedDomain} siap!`, 'success');
+    showToast(`Source code ${state.parsedDomain} extracted successfully`, 'success');
 
   } catch (error) {
     console.error("Extraction error:", error);
     elements.statusBanner.className = 'status-banner error';
     elements.statusIcon.className = 'fa-solid fa-circle-exclamation';
-    elements.statusMessage.innerText = `Gagal mengekstrak: ${error.message}`;
-    showToast(`Gagal: ${error.message}`, 'error');
+    elements.statusMessage.innerText = `Extraction failed: ${error.message}`;
+    showToast(`Error: ${error.message}`, 'error');
   } finally {
     state.isFetching = false;
     elements.btnFetch.disabled = false;
-    elements.btnFetch.innerHTML = '<i class="fa-solid fa-bolt"></i> <span>Dapatkan Source Code</span>';
+    elements.btnFetch.innerHTML = '<i class="fa-solid fa-bolt"></i> <span>Extract Source</span>';
   }
 }
 
@@ -382,7 +384,7 @@ function renderOverviewTab() {
   elements.metaTitle.innerText = state.title;
   elements.metaDescription.innerText = state.metadata.description;
   elements.metaFavicon.innerText = state.metadata.favicon;
-  elements.metaLinksCount.innerText = `${state.linksCount} link terdeteksi`;
+  elements.metaLinksCount.innerText = `${state.linksCount} links detected`;
 }
 
 // RENDER HTML
@@ -398,8 +400,8 @@ function renderScriptsTab() {
   elements.jsListContainer.innerHTML = '';
   
   if (state.scripts.length === 0) {
-    elements.jsListContainer.innerHTML = '<p style="font-size:0.8rem; color:var(--text-muted); padding:10px;">Tidak ada script terdeteksi.</p>';
-    elements.jsCodeViewer.textContent = '// Tidak ada file JS';
+    elements.jsListContainer.innerHTML = '<p style="font-size:0.8rem; color:var(--text-muted); padding:10px;">No scripts detected.</p>';
+    elements.jsCodeViewer.textContent = '// No JS files found';
     return;
   }
 
@@ -408,7 +410,7 @@ function renderScriptsTab() {
     div.className = `resource-item ${idx === state.activeJsIndex ? 'active' : ''}`;
     div.innerHTML = `
       <span>${item.name}</span>
-      <div class="res-meta">
+      <div class="meta">
         <span>${item.type === 'inline' ? 'Inline Script' : 'External JS'}</span>
         <span>${item.type === 'inline' ? formatBytes(item.content.length) : 'Fetch on click'}</span>
       </div>
@@ -431,13 +433,13 @@ async function selectJsScript(index) {
   elements.jsSelectedTitle.innerText = item.name;
 
   if (item.type === 'external' && !item.fetched) {
-    elements.jsCodeViewer.textContent = `// Sedang mengunduh isi ${item.url}...`;
+    elements.jsCodeViewer.textContent = `// Fetching contents from ${item.url}...`;
     try {
       const res = await fetchWithProxy(item.url, elements.proxySelect.value);
       item.content = res.html;
       item.fetched = true;
     } catch (e) {
-      item.content = `// Gagal mengambil external JS: ${e.message}\n// URL: ${item.url}`;
+      item.content = `// Failed to fetch external JS: ${e.message}\n// URL: ${item.url}`;
     }
   }
 
@@ -452,8 +454,8 @@ function renderStylesTab() {
   elements.cssListContainer.innerHTML = '';
 
   if (state.styles.length === 0) {
-    elements.cssListContainer.innerHTML = '<p style="font-size:0.8rem; color:var(--text-muted); padding:10px;">Tidak ada stylesheet terdeteksi.</p>';
-    elements.cssCodeViewer.textContent = '/* Tidak ada file CSS */';
+    elements.cssListContainer.innerHTML = '<p style="font-size:0.8rem; color:var(--text-muted); padding:10px;">No stylesheets detected.</p>';
+    elements.cssCodeViewer.textContent = '/* No CSS files found */';
     return;
   }
 
@@ -462,7 +464,7 @@ function renderStylesTab() {
     div.className = `resource-item ${idx === state.activeCssIndex ? 'active' : ''}`;
     div.innerHTML = `
       <span>${item.name}</span>
-      <div class="res-meta">
+      <div class="meta">
         <span>${item.type === 'inline' ? 'Inline Style' : 'External CSS'}</span>
         <span>${item.type === 'inline' ? formatBytes(item.content.length) : 'Fetch on click'}</span>
       </div>
@@ -485,13 +487,13 @@ async function selectCssStyle(index) {
   elements.cssSelectedTitle.innerText = item.name;
 
   if (item.type === 'external' && !item.fetched) {
-    elements.cssCodeViewer.textContent = `/* Sedang mengunduh isi stylesheet ${item.url}... */`;
+    elements.cssCodeViewer.textContent = `/* Fetching contents from ${item.url}... */`;
     try {
       const res = await fetchWithProxy(item.url, elements.proxySelect.value);
       item.content = res.html;
       item.fetched = true;
     } catch (e) {
-      item.content = `/* Gagal mengambil external CSS: ${e.message}\n * URL: ${item.url}\n */`;
+      item.content = `/* Failed to fetch external CSS: ${e.message}\n * URL: ${item.url}\n */`;
     }
   }
 
@@ -514,7 +516,7 @@ function renderMediaTab(filter = 'all') {
   });
 
   if (filteredMedia.length === 0) {
-    elements.assetGridContainer.innerHTML = '<p style="font-size:0.8rem; color:var(--text-muted); padding:20px;">Tidak ada asset media.</p>';
+    elements.assetGridContainer.innerHTML = '<p style="font-size:0.8rem; color:var(--text-muted); padding:20px;">No media assets found.</p>';
     return;
   }
 
@@ -524,16 +526,16 @@ function renderMediaTab(filter = 'all') {
     
     let previewHtml = '';
     if (item.type === 'svg') {
-      previewHtml = `<div class="asset-preview-box"><i class="fa-solid fa-code-branch" style="font-size:1.8rem; color:var(--primary-blue);"></i></div>`;
+      previewHtml = `<div class="asset-thumb"><i class="fa-solid fa-code-branch" style="font-size:1.8rem; color:var(--primary);"></i></div>`;
     } else {
-      previewHtml = `<div class="asset-preview-box"><img src="${item.url}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/150?text=Image+Error'" /></div>`;
+      previewHtml = `<div class="asset-thumb"><img src="${item.url}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/150?text=Image+Error'" /></div>`;
     }
 
     card.innerHTML = `
       ${previewHtml}
-      <div class="asset-info">
-        <div class="asset-name">${item.name}</div>
-        <div class="asset-url">${item.url}</div>
+      <div style="display:flex; flex-direction:column; gap:2px;">
+        <div class="asset-title">${item.name}</div>
+        <div class="asset-link">${item.url}</div>
       </div>
       <div class="asset-actions">
         <button class="btn-xs btn-copy-url" data-url="${item.url}"><i class="fa-solid fa-link"></i> Copy Link</button>
@@ -543,14 +545,14 @@ function renderMediaTab(filter = 'all') {
 
     card.querySelector('.btn-copy-url').addEventListener('click', (e) => {
       const urlToCopy = e.currentTarget.getAttribute('data-url');
-      copyToClipboard(urlToCopy, 'Link asset disalin!');
+      copyToClipboard(urlToCopy, 'Asset link copied');
     });
 
     elements.assetGridContainer.appendChild(card);
   });
 }
 
-// RENDER LIVE PREVIEW
+// RENDER LIVE PREVIEW OF EXTRACTED SOURCE
 function renderLivePreview() {
   if (!state.htmlRaw) return;
 
@@ -575,8 +577,8 @@ function renderLivePreview() {
   elements.previewIframe.srcdoc = liveDoc;
 }
 
-// DIRECT BLOB URL DOWNLOAD ENGINE (CHROME / SAFARI / SYSTEM BROWSER INTEGRATION)
-async function downloadViaBlobBrowser(fileName, contentOrBlob, mimeType = 'application/octet-stream') {
+// DIRECT BROWSER DOWNLOAD VIA BLOB URL & REDIRECT TO CHROME / SAFARI / SYSTEM BROWSER
+async function downloadViaBrowserRedirect(fileName, contentOrBlob, mimeType = 'application/octet-stream') {
   triggerHaptic();
 
   let blob;
@@ -586,20 +588,27 @@ async function downloadViaBlobBrowser(fileName, contentOrBlob, mimeType = 'appli
     blob = new Blob([contentOrBlob], { type: mimeType });
   }
 
+  // Create real Blob URL
   const blobUrl = URL.createObjectURL(blob);
 
-  // 1. Trigger Standard Anchor Click with target="_blank"
-  const a = document.createElement('a');
-  a.href = blobUrl;
-  a.download = fileName;
-  a.target = '_blank';
-  a.rel = 'noopener';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  // 1. Direct Anchor Download Link with Target Blank
+  const anchor = document.createElement('a');
+  anchor.href = blobUrl;
+  anchor.download = fileName;
+  anchor.target = '_blank';
+  anchor.rel = 'noopener noreferrer';
+  document.body.appendChild(anchor);
+  anchor.click();
+  document.body.removeChild(anchor);
 
-  // 2. Native Mobile Fallback (Capacitor Share / Browser Sheet for Chrome & Safari)
-  if (window.Capacitor && window.Capacitor.isPluginAvailable("Share")) {
+  // 2. Redirect to Chrome / Safari / Native System Browser if in Capacitor Native WebView
+  if (window.Capacitor && window.Capacitor.isPluginAvailable("Browser")) {
+    try {
+      await window.Capacitor.Plugins.Browser.open({ url: blobUrl });
+    } catch (e) {
+      console.warn("Capacitor Browser plugin error", e);
+    }
+  } else if (window.Capacitor && window.Capacitor.isPluginAvailable("Share")) {
     try {
       if (window.Capacitor.isPluginAvailable("Filesystem")) {
         const { Filesystem, Directory } = window.Capacitor.Plugins;
@@ -607,15 +616,15 @@ async function downloadViaBlobBrowser(fileName, contentOrBlob, mimeType = 'appli
         reader.readAsDataURL(blob);
         reader.onloadend = async () => {
           try {
-            const saved = await Filesystem.writeFile({
+            const tempFile = await Filesystem.writeFile({
               path: fileName,
               data: reader.result,
               directory: Directory.Cache
             });
             await window.Capacitor.Plugins.Share.share({
               title: fileName,
-              url: saved.uri,
-              dialogTitle: 'Download File via Browser'
+              url: tempFile.uri,
+              dialogTitle: 'Download via Browser'
             });
           } catch (e) {}
         };
@@ -624,22 +633,22 @@ async function downloadViaBlobBrowser(fileName, contentOrBlob, mimeType = 'appli
   }
 
   setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
-  showToast(`🌐 Membuka Browser untuk mendownload ${fileName}...`, 'success');
+  showToast(`Downloading ${fileName} via browser`, 'success');
 }
 
 // DOWNLOAD FULL ZIP
 async function downloadFullZip() {
   if (!state.htmlRaw) {
-    showToast('Silakan extract website terlebih dahulu!', 'error');
+    showToast('Please extract website source first', 'error');
     return;
   }
 
   if (!window.JSZip) {
-    showToast('Library JSZip belum siap.', 'error');
+    showToast('JSZip library unavailable', 'error');
     return;
   }
 
-  showToast('📦 Mempersiapkan paket ZIP...', 'info');
+  showToast('Preparing ZIP package...', 'info');
   triggerHaptic();
 
   const zip = new JSZip();
@@ -660,7 +669,7 @@ async function downloadFullZip() {
         s.content = res.html;
         s.fetched = true;
       } catch (e) {
-        s.content = `// Gagal fetch: ${s.url}`;
+        s.content = `// Failed to fetch: ${s.url}`;
       }
     }
     const jsName = s.name.endsWith('.js') ? s.name : `${s.name}.js`;
@@ -676,7 +685,7 @@ async function downloadFullZip() {
         st.content = res.html;
         st.fetched = true;
       } catch (e) {
-        st.content = `/* Gagal fetch: ${st.url} */`;
+        st.content = `/* Failed to fetch: ${st.url} */`;
       }
     }
     const cssName = st.name.endsWith('.css') ? st.name : `${st.name}.css`;
@@ -698,11 +707,11 @@ async function downloadFullZip() {
   const blobZip = await zip.generateAsync({ type: 'blob' });
   const zipFileName = `${folderName}.zip`;
 
-  await downloadViaBlobBrowser(zipFileName, blobZip, 'application/zip');
+  await downloadViaBrowserRedirect(zipFileName, blobZip, 'application/zip');
 }
 
-// COPY CLIPBOARD
-async function copyToClipboard(text, successMsg = 'Berhasil disalin ke clipboard!') {
+// COPY TO CLIPBOARD
+async function copyToClipboard(text, successMsg = 'Copied to clipboard') {
   try {
     if (window.Capacitor && window.Capacitor.isPluginAvailable("Clipboard")) {
       await window.Capacitor.Plugins.Clipboard.write({ string: text });
@@ -712,11 +721,11 @@ async function copyToClipboard(text, successMsg = 'Berhasil disalin ke clipboard
     triggerHaptic();
     showToast(successMsg, 'success');
   } catch (err) {
-    showToast('Gagal menyalin.', 'error');
+    showToast('Failed to copy to clipboard', 'error');
   }
 }
 
-// INITIALIZE LISTENERS
+// LISTENERS
 function initEventListeners() {
 
   elements.fetchForm.addEventListener('submit', (e) => {
@@ -735,10 +744,10 @@ function initEventListeners() {
       }
       if (text) {
         elements.urlInput.value = text;
-        showToast('URL ditempel!', 'info');
+        showToast('URL pasted', 'info');
       }
     } catch (e) {
-      showToast('Gagal mengakses clipboard.', 'error');
+      showToast('Clipboard access failed', 'error');
     }
   });
 
@@ -770,28 +779,28 @@ function initEventListeners() {
   });
 
   elements.btnQuickZip.addEventListener('click', downloadFullZip);
-  elements.btnQuickCopyHtml.addEventListener('click', () => copyToClipboard(state.htmlFormatted, 'HTML disalin!'));
+  elements.btnQuickCopyHtml.addEventListener('click', () => copyToClipboard(state.htmlFormatted, 'HTML copied'));
 
   elements.btnFormatHtml.addEventListener('click', () => {
     if (window.html_beautify) {
       state.htmlFormatted = window.html_beautify(state.htmlRaw, { indent_size: 2 });
       renderHtmlTab();
-      showToast('HTML di-beautify!', 'success');
+      showToast('HTML formatted', 'success');
     }
   });
 
   elements.btnToggleWrapHtml.addEventListener('click', () => {
     state.wrapLines = !state.wrapLines;
-    elements.htmlCodeContainer.classList.toggle('wrap-lines', state.wrapLines);
-    showToast(state.wrapLines ? 'Wrap: ON' : 'Wrap: OFF', 'info');
+    elements.htmlCodeContainer.classList.toggle('wrap', state.wrapLines);
+    showToast(state.wrapLines ? 'Wrap enabled' : 'Wrap disabled', 'info');
   });
 
-  elements.btnCopyHtml.addEventListener('click', () => copyToClipboard(state.htmlFormatted, 'HTML disalin!'));
+  elements.btnCopyHtml.addEventListener('click', () => copyToClipboard(state.htmlFormatted, 'HTML copied'));
   
   elements.btnDownloadHtml.addEventListener('click', async () => {
     const fileName = `${state.parsedDomain}_index.html`;
     const content = state.htmlFormatted || state.htmlRaw;
-    await downloadViaBlobBrowser(fileName, content, 'text/html');
+    await downloadViaBrowserRedirect(fileName, content, 'text/html');
   });
 
   elements.btnFormatJs.addEventListener('click', () => {
@@ -800,20 +809,20 @@ function initEventListeners() {
       item.content = window.js_beautify(item.content, { indent_size: 2 });
       elements.jsCodeViewer.textContent = item.content;
       if (window.Prism) Prism.highlightElement(elements.jsCodeViewer);
-      showToast('JS di-beautify!', 'success');
+      showToast('JS formatted', 'success');
     }
   });
 
   elements.btnCopyJs.addEventListener('click', () => {
     const item = state.scripts[state.activeJsIndex];
-    if (item) copyToClipboard(item.content, `Script ${item.name} disalin!`);
+    if (item) copyToClipboard(item.content, `Script ${item.name} copied`);
   });
 
   elements.btnDownloadJs.addEventListener('click', async () => {
     const item = state.scripts[state.activeJsIndex];
     if (item) {
       const fileName = item.name.endsWith('.js') ? item.name : `${item.name}.js`;
-      await downloadViaBlobBrowser(fileName, item.content, 'application/javascript');
+      await downloadViaBrowserRedirect(fileName, item.content, 'application/javascript');
     }
   });
 
@@ -823,20 +832,20 @@ function initEventListeners() {
       item.content = window.css_beautify(item.content, { indent_size: 2 });
       elements.cssCodeViewer.textContent = item.content;
       if (window.Prism) Prism.highlightElement(elements.cssCodeViewer);
-      showToast('CSS di-beautify!', 'success');
+      showToast('CSS formatted', 'success');
     }
   });
 
   elements.btnCopyCss.addEventListener('click', () => {
     const item = state.styles[state.activeCssIndex];
-    if (item) copyToClipboard(item.content, `Stylesheet ${item.name} disalin!`);
+    if (item) copyToClipboard(item.content, `Stylesheet ${item.name} copied`);
   });
 
   elements.btnDownloadCss.addEventListener('click', async () => {
     const item = state.styles[state.activeCssIndex];
     if (item) {
       const fileName = item.name.endsWith('.css') ? item.name : `${item.name}.css`;
-      await downloadViaBlobBrowser(fileName, item.content, 'text/css');
+      await downloadViaBrowserRedirect(fileName, item.content, 'text/css');
     }
   });
 
@@ -854,7 +863,7 @@ function initEventListeners() {
       document.querySelectorAll('.vp-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       const vp = btn.getAttribute('data-vp');
-      elements.iframeBox.className = `iframe-container ${vp}`;
+      elements.iframeBox.className = `iframe-box ${vp}`;
     });
   });
 
@@ -868,7 +877,7 @@ function initEventListeners() {
   elements.btnDlHtmlOnly.addEventListener('click', async () => {
     const fileName = `${state.parsedDomain}_index.html`;
     const content = state.htmlFormatted || state.htmlRaw;
-    await downloadViaBlobBrowser(fileName, content, 'text/html');
+    await downloadViaBrowserRedirect(fileName, content, 'text/html');
   });
   
   elements.btnDlJsBundle.addEventListener('click', async () => {
@@ -877,7 +886,7 @@ function initEventListeners() {
       combinedJs += `/* =================== ${s.name} =================== */\n${s.content}\n\n`;
     }
     const fileName = `${state.parsedDomain}_bundle.js`;
-    await downloadViaBlobBrowser(fileName, combinedJs, 'application/javascript');
+    await downloadViaBrowserRedirect(fileName, combinedJs, 'application/javascript');
   });
 
   elements.btnDlCssBundle.addEventListener('click', async () => {
@@ -886,7 +895,7 @@ function initEventListeners() {
       combinedCss += `/* =================== ${st.name} =================== */\n${st.content}\n\n`;
     }
     const fileName = `${state.parsedDomain}_bundle.css`;
-    await downloadViaBlobBrowser(fileName, combinedCss, 'text/css');
+    await downloadViaBrowserRedirect(fileName, combinedCss, 'text/css');
   });
 
   elements.searchHtmlInput.addEventListener('input', (e) => {
