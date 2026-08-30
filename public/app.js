@@ -1,6 +1,5 @@
 /**
- * RSOURCE - Ultra Website Source Code Extractor & Inspector
- * Neo-Brutalism Edition & Enhanced Download Engine
+ * RSOURCE — Sleek Mobile-First Source Extractor Engine & Blob Download Engine
  */
 
 // State Management
@@ -21,7 +20,7 @@ const state = {
   wrapLines: false
 };
 
-// UI Element Cache
+// UI Elements
 const elements = {
   fetchForm: document.getElementById('fetchForm'),
   urlInput: document.getElementById('urlInput'),
@@ -36,7 +35,7 @@ const elements = {
   inspectorCard: document.getElementById('inspectorCard'),
   toastContainer: document.getElementById('toastContainer'),
   
-  // Tab Elements
+  // Tabs
   tabBtns: document.querySelectorAll('.tab-btn'),
   tabContents: document.querySelectorAll('.tab-content'),
   
@@ -50,14 +49,14 @@ const elements = {
   statCssCount: document.getElementById('statCssCount'),
   statMediaCount: document.getElementById('statMediaCount'),
   
-  // Meta Table
+  // Metadata
   metaUrl: document.getElementById('metaUrl'),
   metaTitle: document.getElementById('metaTitle'),
   metaDescription: document.getElementById('metaDescription'),
   metaFavicon: document.getElementById('metaFavicon'),
   metaLinksCount: document.getElementById('metaLinksCount'),
   
-  // Viewers
+  // Code Viewers
   htmlCodeViewer: document.getElementById('htmlCodeViewer'),
   htmlCodeContainer: document.getElementById('htmlCodeContainer'),
   jsListContainer: document.getElementById('jsListContainer'),
@@ -70,7 +69,7 @@ const elements = {
   previewIframe: document.getElementById('previewIframe'),
   iframeBox: document.getElementById('iframeBox'),
   
-  // Buttons
+  // Action Buttons
   btnQuickZip: document.getElementById('btnQuickZip'),
   btnQuickCopyHtml: document.getElementById('btnQuickCopyHtml'),
   btnFormatHtml: document.getElementById('btnFormatHtml'),
@@ -92,18 +91,16 @@ const elements = {
   searchHtmlInput: document.getElementById('searchHtml')
 };
 
-// Helper: Haptic Feedback
+// Haptic helper
 async function triggerHaptic() {
   try {
     if (window.Capacitor && window.Capacitor.isPluginAvailable("Haptics")) {
-      await window.Capacitor.Plugins.Haptics.impact({ style: "HEAVY" });
+      await window.Capacitor.Plugins.Haptics.impact({ style: "LIGHT" });
     }
-  } catch (e) {
-    // Ignore in browser
-  }
+  } catch (e) {}
 }
 
-// Helper: Toast Notifications
+// Toast helper
 function showToast(message, type = 'info') {
   const toast = document.createElement('div');
   toast.className = `toast ${type}`;
@@ -116,12 +113,12 @@ function showToast(message, type = 'info') {
   
   setTimeout(() => {
     toast.style.opacity = '0';
-    toast.style.transform = 'translateY(20px)';
+    toast.style.transform = 'translateY(10px)';
     setTimeout(() => toast.remove(), 300);
-  }, 4000);
+  }, 3500);
 }
 
-// Helper: Format Bytes
+// Format Bytes
 function formatBytes(bytes) {
   if (!bytes || bytes === 0) return '0 B';
   const k = 1024;
@@ -130,7 +127,7 @@ function formatBytes(bytes) {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
-// Helper: Normalize URL
+// Normalize URL
 function normalizeUrl(input) {
   let url = input.trim();
   if (!url) return '';
@@ -140,7 +137,7 @@ function normalizeUrl(input) {
   return url;
 }
 
-// Helper: Resolve Absolute URL
+// Resolve relative URL
 function resolveAbsoluteUrl(relative, base) {
   try {
     return new URL(relative, base).href;
@@ -149,7 +146,7 @@ function resolveAbsoluteUrl(relative, base) {
   }
 }
 
-// Helper: CORS Proxy Fetcher
+// Proxy Fetcher
 async function fetchWithProxy(targetUrl, selectedProxy) {
   const startTime = performance.now();
 
@@ -159,7 +156,7 @@ async function fetchWithProxy(targetUrl, selectedProxy) {
       const duration = Math.round(performance.now() - startTime);
       return { html: response.data, status: response.status || 200, duration, proxyUsed: 'Capacitor Native Http' };
     } catch (err) {
-      console.warn("CapacitorHttp failed, using web proxies fallback...", err);
+      console.warn("CapacitorHttp fallback to web proxy", err);
     }
   }
 
@@ -195,10 +192,10 @@ async function fetchWithProxy(targetUrl, selectedProxy) {
     }
   }
 
-  throw new Error(lastError ? lastError.message : 'Gagal mengakses URL melalui proxy.');
+  throw new Error(lastError ? lastError.message : 'Gagal mengakses URL.');
 }
 
-// MAIN EXTRACTION ENGINE
+// MAIN EXTRACTION
 async function extractWebsiteSource(rawUrl) {
   const targetUrl = normalizeUrl(rawUrl);
   if (!targetUrl) {
@@ -215,11 +212,11 @@ async function extractWebsiteSource(rawUrl) {
 
   state.isFetching = true;
   elements.btnFetch.disabled = true;
-  elements.btnFetch.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> <span>Extracting...</span>';
+  elements.btnFetch.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> <span>Mengestrak...</span>';
   
   elements.statusBanner.className = 'status-banner loading';
   elements.statusIcon.className = 'fa-solid fa-circle-notch fa-spin';
-  elements.statusMessage.innerText = `Sedang mengekstrak source code ${state.parsedDomain}...`;
+  elements.statusMessage.innerText = `Sedang mengekstrak ${state.parsedDomain}...`;
   elements.statusTags.innerHTML = '';
 
   triggerHaptic();
@@ -259,7 +256,7 @@ async function extractWebsiteSource(rawUrl) {
           type: 'external',
           url: absSrc,
           name: fileName,
-          content: `// External Script URL: ${absSrc}\n// Klik tab untuk mengambil isi skrip lengkap.`,
+          content: `// External Script URL: ${absSrc}\n// Klik tab untuk mengambil isi skrip.`,
           fetched: false
         });
       } else if (el.textContent.trim()) {
@@ -274,7 +271,7 @@ async function extractWebsiteSource(rawUrl) {
       }
     }
 
-    // Extract Stylesheets
+    // Extract Styles
     state.styles = [];
     const linkElements = doc.querySelectorAll('link[rel="stylesheet"]');
     const styleElements = doc.querySelectorAll('style');
@@ -329,24 +326,21 @@ async function extractWebsiteSource(rawUrl) {
       state.media.unshift({ type: 'icon', url: state.metadata.favicon, name: 'Favicon Icon' });
     }
 
-    // Update Status Banner
     elements.statusBanner.className = 'status-banner success';
     elements.statusIcon.className = 'fa-solid fa-circle-check';
-    elements.statusMessage.innerText = `Berhasil mengekstrak source code ${state.parsedDomain}!`;
+    elements.statusMessage.innerText = `Ekstraksi ${state.parsedDomain} selesai!`;
     elements.statusTags.innerHTML = `
-      <span class="status-tag">Status 200 OK</span>
+      <span class="status-tag">HTTP 200 OK</span>
       <span class="status-tag">${fetchResult.duration} ms</span>
       <span class="status-tag">${formatBytes(state.htmlRaw.length)}</span>
     `;
 
-    // Format HTML
     if (window.html_beautify) {
       state.htmlFormatted = window.html_beautify(state.htmlRaw, { indent_size: 2 });
     } else {
       state.htmlFormatted = state.htmlRaw;
     }
 
-    // Render UI Tabs
     renderOverviewTab();
     renderHtmlTab();
     renderScriptsTab();
@@ -357,7 +351,7 @@ async function extractWebsiteSource(rawUrl) {
     elements.inspectorCard.classList.add('active');
     elements.inspectorCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-    showToast(`Extraction ${state.parsedDomain} Berhasil!`, 'success');
+    showToast(`Source code ${state.parsedDomain} siap!`, 'success');
 
   } catch (error) {
     console.error("Extraction error:", error);
@@ -372,7 +366,7 @@ async function extractWebsiteSource(rawUrl) {
   }
 }
 
-// TAB 1: OVERVIEW
+// RENDER OVERVIEW
 function renderOverviewTab() {
   elements.badgeHtml.innerText = formatBytes(state.htmlRaw.length);
   elements.badgeScripts.innerText = state.scripts.length;
@@ -391,7 +385,7 @@ function renderOverviewTab() {
   elements.metaLinksCount.innerText = `${state.linksCount} link terdeteksi`;
 }
 
-// TAB 2: HTML
+// RENDER HTML
 function renderHtmlTab() {
   elements.htmlCodeViewer.textContent = state.htmlFormatted;
   if (window.Prism) {
@@ -399,12 +393,12 @@ function renderHtmlTab() {
   }
 }
 
-// TAB 3: SCRIPTS JS
+// RENDER SCRIPTS
 function renderScriptsTab() {
   elements.jsListContainer.innerHTML = '';
   
   if (state.scripts.length === 0) {
-    elements.jsListContainer.innerHTML = '<p style="font-size: 0.85rem; color: var(--text-muted); padding: 10px;">Tidak ada script terdeteksi.</p>';
+    elements.jsListContainer.innerHTML = '<p style="font-size:0.8rem; color:var(--text-muted); padding:10px;">Tidak ada script terdeteksi.</p>';
     elements.jsCodeViewer.textContent = '// Tidak ada file JS';
     return;
   }
@@ -453,12 +447,12 @@ async function selectJsScript(index) {
   }
 }
 
-// TAB 4: STYLES CSS
+// RENDER STYLES
 function renderStylesTab() {
   elements.cssListContainer.innerHTML = '';
 
   if (state.styles.length === 0) {
-    elements.cssListContainer.innerHTML = '<p style="font-size: 0.85rem; color: var(--text-muted); padding: 10px;">Tidak ada stylesheet terdeteksi.</p>';
+    elements.cssListContainer.innerHTML = '<p style="font-size:0.8rem; color:var(--text-muted); padding:10px;">Tidak ada stylesheet terdeteksi.</p>';
     elements.cssCodeViewer.textContent = '/* Tidak ada file CSS */';
     return;
   }
@@ -507,7 +501,7 @@ async function selectCssStyle(index) {
   }
 }
 
-// TAB 5: MEDIA & ASSETS
+// RENDER MEDIA
 function renderMediaTab(filter = 'all') {
   elements.assetGridContainer.innerHTML = '';
 
@@ -520,7 +514,7 @@ function renderMediaTab(filter = 'all') {
   });
 
   if (filteredMedia.length === 0) {
-    elements.assetGridContainer.innerHTML = '<p style="font-size: 0.85rem; color: var(--text-muted); padding: 20px;">Tidak ada asset media pada filter ini.</p>';
+    elements.assetGridContainer.innerHTML = '<p style="font-size:0.8rem; color:var(--text-muted); padding:20px;">Tidak ada asset media.</p>';
     return;
   }
 
@@ -530,7 +524,7 @@ function renderMediaTab(filter = 'all') {
     
     let previewHtml = '';
     if (item.type === 'svg') {
-      previewHtml = `<div class="asset-preview-box"><i class="fa-solid fa-code-branch" style="font-size:2rem; color:var(--primary-blue);"></i></div>`;
+      previewHtml = `<div class="asset-preview-box"><i class="fa-solid fa-code-branch" style="font-size:1.8rem; color:var(--primary-blue);"></i></div>`;
     } else {
       previewHtml = `<div class="asset-preview-box"><img src="${item.url}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/150?text=Image+Error'" /></div>`;
     }
@@ -556,11 +550,10 @@ function renderMediaTab(filter = 'all') {
   });
 }
 
-// TAB 6: LIVE PREVIEW OF EXTRACTED SOURCE CODE
+// RENDER LIVE PREVIEW
 function renderLivePreview() {
   if (!state.htmlRaw) return;
 
-  // Build a clean, self-contained HTML representation of the extracted source code
   const baseTag = `<base href="${state.targetUrl}">`;
   let liveDoc = state.htmlRaw;
   
@@ -568,7 +561,6 @@ function renderLivePreview() {
     liveDoc = liveDoc.replace(/<head>/i, `<head>${baseTag}`);
   }
 
-  // Inject extracted inline CSS styles directly into head
   let cssInjections = '';
   state.styles.forEach(st => {
     if (st.content && !st.content.startsWith('/* External')) {
@@ -583,70 +575,59 @@ function renderLivePreview() {
   elements.previewIframe.srcdoc = liveDoc;
 }
 
-// ENHANCED DOWNLOAD ENGINE (WITH NATIVE DIRECTORY /sdcard/Download/Rsource SUPPORT)
-async function downloadFileNativeOrWeb(fileName, base64Content, blobContent, mimeType) {
+// DIRECT BLOB URL DOWNLOAD ENGINE (CHROME / SAFARI / SYSTEM BROWSER INTEGRATION)
+async function downloadViaBlobBrowser(fileName, contentOrBlob, mimeType = 'application/octet-stream') {
   triggerHaptic();
 
-  let savedPath = '';
+  let blob;
+  if (contentOrBlob instanceof Blob) {
+    blob = contentOrBlob;
+  } else {
+    blob = new Blob([contentOrBlob], { type: mimeType });
+  }
 
-  // 1. Try Capacitor Native Filesystem Write to Rsource folder
-  if (window.Capacitor && window.Capacitor.isPluginAvailable("Filesystem")) {
+  const blobUrl = URL.createObjectURL(blob);
+
+  // 1. Trigger Standard Anchor Click with target="_blank"
+  const a = document.createElement('a');
+  a.href = blobUrl;
+  a.download = fileName;
+  a.target = '_blank';
+  a.rel = 'noopener';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+
+  // 2. Native Mobile Fallback (Capacitor Share / Browser Sheet for Chrome & Safari)
+  if (window.Capacitor && window.Capacitor.isPluginAvailable("Share")) {
     try {
-      const { Filesystem, Directory } = window.Capacitor.Plugins;
-      
-      // Ensure Rsource directory exists
-      try {
-        await Filesystem.mkdir({
-          path: 'Rsource',
-          directory: Directory.Documents || Directory.ExternalStorage,
-          recursive: true
-        });
-      } catch (e) {
-        // Directory might already exist
+      if (window.Capacitor.isPluginAvailable("Filesystem")) {
+        const { Filesystem, Directory } = window.Capacitor.Plugins;
+        const reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onloadend = async () => {
+          try {
+            const saved = await Filesystem.writeFile({
+              path: fileName,
+              data: reader.result,
+              directory: Directory.Cache
+            });
+            await window.Capacitor.Plugins.Share.share({
+              title: fileName,
+              url: saved.uri,
+              dialogTitle: 'Download File via Browser'
+            });
+          } catch (e) {}
+        };
       }
-
-      const fileResult = await Filesystem.writeFile({
-        path: `Rsource/${fileName}`,
-        data: base64Content,
-        directory: Directory.Documents || Directory.ExternalStorage,
-        recursive: true
-      });
-
-      savedPath = fileResult.uri || `/sdcard/Download/Rsource/${fileName}`;
-      showToast(`📁 Saved to /sdcard/Download/Rsource/${fileName}`, 'success');
-
-      // Optionally share/open if Share plugin available
-      if (window.Capacitor.isPluginAvailable("Share")) {
-        try {
-          await window.Capacitor.Plugins.Share.share({
-            title: `Download ${fileName}`,
-            url: fileResult.uri
-          });
-        } catch (e) {}
-      }
-      return;
-    } catch (err) {
-      console.warn("Capacitor Filesystem write error, falling back to Web auto download...", err);
-    }
+    } catch (e) {}
   }
 
-  // 2. Web Browser Standard Auto Download Trigger
-  if (window.saveAs && blobContent) {
-    window.saveAs(blobContent, fileName);
-  } else if (blobContent) {
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blobContent);
-    link.download = fileName;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(link.href);
-  }
-
-  showToast(`📥 ${fileName} berhasil di-download! Check folder Download.`, 'success');
+  setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
+  showToast(`🌐 Membuka Browser untuk mendownload ${fileName}...`, 'success');
 }
 
-// DOWNLOAD FULL ZIP PACKAGE ENGINE
+// DOWNLOAD FULL ZIP
 async function downloadFullZip() {
   if (!state.htmlRaw) {
     showToast('Silakan extract website terlebih dahulu!', 'error');
@@ -658,7 +639,7 @@ async function downloadFullZip() {
     return;
   }
 
-  showToast('📦 Sedang membuat paket ZIP lengkap...', 'info');
+  showToast('📦 Mempersiapkan paket ZIP...', 'info');
   triggerHaptic();
 
   const zip = new JSZip();
@@ -668,10 +649,8 @@ async function downloadFullZip() {
 
   const root = zip.folder(folderName);
 
-  // 1. Add index.html
   root.file('index.html', state.htmlFormatted || state.htmlRaw);
 
-  // 2. Fetch & Add JS Scripts
   const jsFolder = root.folder('scripts');
   for (let i = 0; i < state.scripts.length; i++) {
     const s = state.scripts[i];
@@ -688,7 +667,6 @@ async function downloadFullZip() {
     jsFolder.file(jsName, s.content);
   }
 
-  // 3. Fetch & Add CSS Stylesheets
   const cssFolder = root.folder('styles');
   for (let i = 0; i < state.styles.length; i++) {
     const st = state.styles[i];
@@ -705,34 +683,25 @@ async function downloadFullZip() {
     cssFolder.file(cssName, st.content);
   }
 
-  // 4. Add Report JSON
   const report = {
     app: 'RSource Website Source Code Extractor',
-    version: '2.5 PRO Neo-Brutalism',
+    version: '2.5 PRO',
     extractedAt: new Date().toLocaleString('id-ID'),
     targetUrl: state.targetUrl,
     domain: state.parsedDomain,
     title: state.title,
-    metadata: state.metadata,
-    summary: {
-      htmlSizeBytes: state.htmlRaw.length,
-      scriptsCount: state.scripts.length,
-      stylesCount: state.styles.length,
-      mediaCount: state.media.length
-    }
+    metadata: state.metadata
   };
 
   root.file('metadata.json', JSON.stringify(report, null, 2));
 
-  // Generate Base64 & Blob ZIP formats
-  const base64Zip = await zip.generateAsync({ type: 'base64' });
   const blobZip = await zip.generateAsync({ type: 'blob' });
   const zipFileName = `${folderName}.zip`;
 
-  await downloadFileNativeOrWeb(zipFileName, base64Zip, blobZip, 'application/zip');
+  await downloadViaBlobBrowser(zipFileName, blobZip, 'application/zip');
 }
 
-// COPY TO CLIPBOARD
+// COPY CLIPBOARD
 async function copyToClipboard(text, successMsg = 'Berhasil disalin ke clipboard!') {
   try {
     if (window.Capacitor && window.Capacitor.isPluginAvailable("Clipboard")) {
@@ -743,11 +712,11 @@ async function copyToClipboard(text, successMsg = 'Berhasil disalin ke clipboard
     triggerHaptic();
     showToast(successMsg, 'success');
   } catch (err) {
-    showToast('Gagal menyalin ke clipboard.', 'error');
+    showToast('Gagal menyalin.', 'error');
   }
 }
 
-// INITIALIZE EVENT LISTENERS
+// INITIALIZE LISTENERS
 function initEventListeners() {
 
   elements.fetchForm.addEventListener('submit', (e) => {
@@ -766,7 +735,7 @@ function initEventListeners() {
       }
       if (text) {
         elements.urlInput.value = text;
-        showToast('URL berhasil ditempel!', 'info');
+        showToast('URL ditempel!', 'info');
       }
     } catch (e) {
       showToast('Gagal mengakses clipboard.', 'error');
@@ -801,20 +770,20 @@ function initEventListeners() {
   });
 
   elements.btnQuickZip.addEventListener('click', downloadFullZip);
-  elements.btnQuickCopyHtml.addEventListener('click', () => copyToClipboard(state.htmlFormatted, 'HTML Source Code disalin!'));
+  elements.btnQuickCopyHtml.addEventListener('click', () => copyToClipboard(state.htmlFormatted, 'HTML disalin!'));
 
   elements.btnFormatHtml.addEventListener('click', () => {
     if (window.html_beautify) {
       state.htmlFormatted = window.html_beautify(state.htmlRaw, { indent_size: 2 });
       renderHtmlTab();
-      showToast('HTML berhasil di-beautify!', 'success');
+      showToast('HTML di-beautify!', 'success');
     }
   });
 
   elements.btnToggleWrapHtml.addEventListener('click', () => {
     state.wrapLines = !state.wrapLines;
     elements.htmlCodeContainer.classList.toggle('wrap-lines', state.wrapLines);
-    showToast(state.wrapLines ? 'Line Wrap: ON' : 'Line Wrap: OFF', 'info');
+    showToast(state.wrapLines ? 'Wrap: ON' : 'Wrap: OFF', 'info');
   });
 
   elements.btnCopyHtml.addEventListener('click', () => copyToClipboard(state.htmlFormatted, 'HTML disalin!'));
@@ -822,9 +791,7 @@ function initEventListeners() {
   elements.btnDownloadHtml.addEventListener('click', async () => {
     const fileName = `${state.parsedDomain}_index.html`;
     const content = state.htmlFormatted || state.htmlRaw;
-    const base64 = btoa(unescape(encodeURIComponent(content)));
-    const blob = new Blob([content], { type: 'text/html' });
-    await downloadFileNativeOrWeb(fileName, base64, blob, 'text/html');
+    await downloadViaBlobBrowser(fileName, content, 'text/html');
   });
 
   elements.btnFormatJs.addEventListener('click', () => {
@@ -833,7 +800,7 @@ function initEventListeners() {
       item.content = window.js_beautify(item.content, { indent_size: 2 });
       elements.jsCodeViewer.textContent = item.content;
       if (window.Prism) Prism.highlightElement(elements.jsCodeViewer);
-      showToast('JS berhasil di-beautify!', 'success');
+      showToast('JS di-beautify!', 'success');
     }
   });
 
@@ -846,9 +813,7 @@ function initEventListeners() {
     const item = state.scripts[state.activeJsIndex];
     if (item) {
       const fileName = item.name.endsWith('.js') ? item.name : `${item.name}.js`;
-      const base64 = btoa(unescape(encodeURIComponent(item.content)));
-      const blob = new Blob([item.content], { type: 'application/javascript' });
-      await downloadFileNativeOrWeb(fileName, base64, blob, 'application/javascript');
+      await downloadViaBlobBrowser(fileName, item.content, 'application/javascript');
     }
   });
 
@@ -858,7 +823,7 @@ function initEventListeners() {
       item.content = window.css_beautify(item.content, { indent_size: 2 });
       elements.cssCodeViewer.textContent = item.content;
       if (window.Prism) Prism.highlightElement(elements.cssCodeViewer);
-      showToast('CSS berhasil di-beautify!', 'success');
+      showToast('CSS di-beautify!', 'success');
     }
   });
 
@@ -871,9 +836,7 @@ function initEventListeners() {
     const item = state.styles[state.activeCssIndex];
     if (item) {
       const fileName = item.name.endsWith('.css') ? item.name : `${item.name}.css`;
-      const base64 = btoa(unescape(encodeURIComponent(item.content)));
-      const blob = new Blob([item.content], { type: 'text/css' });
-      await downloadFileNativeOrWeb(fileName, base64, blob, 'text/css');
+      await downloadViaBlobBrowser(fileName, item.content, 'text/css');
     }
   });
 
@@ -905,9 +868,7 @@ function initEventListeners() {
   elements.btnDlHtmlOnly.addEventListener('click', async () => {
     const fileName = `${state.parsedDomain}_index.html`;
     const content = state.htmlFormatted || state.htmlRaw;
-    const base64 = btoa(unescape(encodeURIComponent(content)));
-    const blob = new Blob([content], { type: 'text/html' });
-    await downloadFileNativeOrWeb(fileName, base64, blob, 'text/html');
+    await downloadViaBlobBrowser(fileName, content, 'text/html');
   });
   
   elements.btnDlJsBundle.addEventListener('click', async () => {
@@ -916,9 +877,7 @@ function initEventListeners() {
       combinedJs += `/* =================== ${s.name} =================== */\n${s.content}\n\n`;
     }
     const fileName = `${state.parsedDomain}_bundle.js`;
-    const base64 = btoa(unescape(encodeURIComponent(combinedJs)));
-    const blob = new Blob([combinedJs], { type: 'application/javascript' });
-    await downloadFileNativeOrWeb(fileName, base64, blob, 'application/javascript');
+    await downloadViaBlobBrowser(fileName, combinedJs, 'application/javascript');
   });
 
   elements.btnDlCssBundle.addEventListener('click', async () => {
@@ -927,9 +886,7 @@ function initEventListeners() {
       combinedCss += `/* =================== ${st.name} =================== */\n${st.content}\n\n`;
     }
     const fileName = `${state.parsedDomain}_bundle.css`;
-    const base64 = btoa(unescape(encodeURIComponent(combinedCss)));
-    const blob = new Blob([combinedCss], { type: 'text/css' });
-    await downloadFileNativeOrWeb(fileName, base64, blob, 'text/css');
+    await downloadViaBlobBrowser(fileName, combinedCss, 'text/css');
   });
 
   elements.searchHtmlInput.addEventListener('input', (e) => {
@@ -945,7 +902,7 @@ function initEventListeners() {
   });
 }
 
-// APP INITIALIZATION
+// APP INIT
 document.addEventListener('DOMContentLoaded', () => {
   initEventListeners();
   const defaultUrl = 'https://wikipedia.org';
