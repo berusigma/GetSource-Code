@@ -36,11 +36,10 @@ jobs:
       - name: Sync Capacitor Android
         run: node node_modules/@capacitor/cli/bin/capacitor sync android
 
-      - name: Generate Keystore if missing
+      - name: Generate Fresh Keystore
         run: |
-          if [ ! -f android/app/release.keystore ]; then
-            keytool -genkey -v -keystore android/app/release.keystore -alias rsource -keyalg RSA -keysize 2048 -validity 10000 -storepass android123 -keypass android123 -dname "CN=RSource, OU=App, O=RSourceOrg, L=Jakarta, S=ID, C=ID"
-          fi
+          rm -f android/app/release.keystore
+          keytool -genkey -v -keystore android/app/release.keystore -alias rsource -keyalg RSA -keysize 2048 -validity 10000 -storepass android123 -keypass android123 -dname "CN=RSource, OU=App, O=RSourceOrg, L=Jakarta, S=ID, C=ID"
 
       - name: Build Android Signed Release APK
         run: |
