@@ -1,6 +1,6 @@
 <div align="center">
 
-  <img src="public/rsource_logo.jpg" alt="RSource Logo" width="120" style="border-radius: 20px; box-shadow: 0 10px 25px rgba(37,99,235,0.3);" />
+  <img src="https://raw.githubusercontent.com/berusigma/GetSource-Code/refs/heads/main/public/rsource_logo.jpg" alt="RSource Logo" width="140" style="border-radius: 20px; box-shadow: 0 10px 25px rgba(37,99,235,0.3);" />
 
   # ⚡ RSource — Website Source Code Extractor & Live Inspector
 

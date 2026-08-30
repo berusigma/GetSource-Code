@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace "com.mysimplestart.app"
+    namespace "com.rsource.app"
     compileSdk rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.mysimplestart.app"
+        applicationId "com.rsource.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -20,7 +20,7 @@ android {
         release {
             storeFile file('release.keystore')
             storePassword 'android123'
-            keyAlias 'rysav'
+            keyAlias 'rsource'
             keyPassword 'android123'
         }
     }
