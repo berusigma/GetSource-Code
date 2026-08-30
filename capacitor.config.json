@@ -1,6 +1,6 @@
 {
-  "appId": "com.mysimplestart.app",
-  "appName": "Capacitor Starter",
+  "appId": "com.rsource.app",
+  "appName": "RSource",
   "webDir": "public",
   "plugins": {
     "CapacitorHttp": {

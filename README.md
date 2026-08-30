@@ -1,231 +1,103 @@
-# 🚀 Capacitor 7 Hybrid Starter Template (Android & iOS)
+<div align="center">
 
-![Capacitor Version](https://img.shields.io/badge/Capacitor-7.0.0-blue?logo=capacitor)
-![Platforms](https://img.shields.io/badge/platform-Android%20%7C%20iOS-green)
-![Build](https://img.shields.io/badge/build-GitHub%20Actions-2088FF?logo=github-actions)
-![License](https://img.shields.io/badge/license-MIT-yellow)
+  <img src="public/rsource_logo.jpg" alt="RSource Logo" width="120" style="border-radius: 20px; box-shadow: 0 10px 25px rgba(37,99,235,0.3);" />
 
-**Starter Template** berbasis **Capacitor 7** untuk membangun aplikasi mobile hybrid lintas platform (**Android** dan **iOS / iPhone**) dengan **Single Codebase (satu kode untuk semua OS)** dan **Otomatisasi Build Gratis via GitHub Actions**.
+  # ⚡ RSource — Website Source Code Extractor & Live Inspector
 
----
+  <p align="center">
+    <b>Aplikasi Ekstraktor Source Code Website Multi-Platform dengan Desain Ultra Premium (Putih & Biru)</b><br />
+    Ekstrak HTML, JavaScript (.JS), Stylesheet (.CSS), Gambar, & Asset Media dengan Sekali Klik.
+  </p>
 
-## 🌟 Konsep Utama: Single Codebase (Tulis 1x untuk Semua OS)
+  <p align="center">
+    <a href="https://github.com/berusigma/GetSource-Code/actions"><img src="https://img.shields.io/github/actions/workflow/status/berusigma/GetSource-Code/build-and-release.yml?style=for-the-badge&logo=github&label=Build%20%26%20Release" alt="Build Status"></a>
+    <a href="https://github.com/berusigma/GetSource-Code/releases"><img src="https://img.shields.io/github/v/release/berusigma/GetSource-Code?style=for-the-badge&color=00f2fe&label=Release" alt="Release Version"></a>
+    <img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" alt="License MIT">
+    <img src="https://img.shields.io/badge/Platforms-Android%20%7C%20iOS%20%7C%20Windows%20%7C%20Web-blueviolet?style=for-the-badge" alt="Platform Support">
+  </p>
 
-> **Sangat Mudah & Tidak Ribet!**  
-> Anda **HANYA PERLU MENULIS KODE 1 KALI SAJA** di dalam folder `public/` (HTML, CSS, dan JavaScript).  
-> Anda **TIDAK PERLU** menyalin atau memindahkan kode secara manual ke dalam direktori `android/` atau `ios/`.  
-> 
-> Saat Anda menjalankan perintah `npx cap sync` atau melakukan `git push` ke GitHub, sistem Capacitor secara otomatis menyalin seluruh file dari folder `public/` ke dalam direktori Android dan iOS!
-
----
-
-## 📁 Struktur Direktori Projek
-
-```text
-capacitor-starter/
-├── .github/
-│   └── workflows/
-│       └── build-all-platforms.yml   # Script GitHub Actions untuk build otomatis
-├── android/                          # Folder native Android (Android Studio)
-├── ios/                              # Folder native iOS (Xcode)
-├── public/                           # ⭐ TEMPAT UTAMA KODING ANDA (Single Codebase)
-│   ├── index.html                    # Halaman utama (UI)
-│   ├── style.css                     # Styling tampilan
-│   └── app.js                        # Logika JavaScript & Interaksi Plugin
-├── capacitor.config.json             # Konfigurasi Nama Aplikasi & App ID
-├── package.json                      # Daftar Dependency NPM
-└── README.md                         # Panduan ini
-```
+</div>
 
 ---
 
-📱 Panduan Penggunaan Lengkap
+## 🚀 Key Features (Fitur Utama)
 
-Langkah 1: Kloning Repository & Install Dependensi
+* 🎨 **Desain Ultra Premium (Putih & Biru)**: Antarmuka modern, bersih, glassmorphism dengan mikro-animasi dan *dark-navy code inspector pane*.
+* 🌐 **Full Source Code Extraction**:
+  * 📄 **HTML Code**: Terformat rapi (*beautified*) dengan *syntax highlighting* PrismJS, pencarian baris kode, dan opsi *wrap lines*.
+  * ⚡ **JavaScript (.JS)**: Mendeteksi *inline scripts* maupun file external `<script src="...">` secara otomatis.
+  * 🎨 **Stylesheet (.CSS)**: Mendeteksi *inline styles* maupun file external `<link rel="stylesheet">`.
+  * 🖼️ **Media & Assets**: Galeri grid visual untuk seluruh gambar (`<img>`), SVG, Favicon, dan gambar OpenGraph.
+* 📥 **Auto-Download Direct to Download Folder**:
+  * **Download Single File**: Simpan `index.html`, bundle `.js`, atau bundle `.css` sekali klik.
+  * 📦 **Download Complete Package (.ZIP)**: Mengepak seluruh file HTML, skrip, stylesheet, metadata JSON report ke dalam 1 file `.zip` yang **tersimpan otomatis di folder Download Anda**.
+* 👁️ **Live Responsive Web Preview**:
+  * Pratinjau *iframe interactive real-time* dari website target.
+  * Pilihan viewport responsif: **Desktop (100%)**, **Laptop (1024px)**, **Tablet (768px)**, dan **Mobile (375px)**.
+* 🛡️ **Multi-Proxy CORS Bypass System**:
+  * Mendukung auto fallback ke AllOrigins API, CorsProxy.io, CodeTabs, Direct Fetch, dan `CapacitorHttp` native proxy.
+* 🤖 **Automated GitHub Actions CI/CD Release**:
+  * Setiap kali ada update di repository, GitHub Actions akan otomatis melakukan kompilasi file **Android APK**, **iOS IPA**, dan **Windows EXE**, lalu mengunggahnya ke **GitHub Releases**.
+
+---
+
+## 🛠️ Tech Stack & Technologies
+
+* **Frontend Engine**: HTML5, Vanilla JavaScript (ES6+), Modern CSS3 Design System.
+* **Syntax Highlighting**: [PrismJS](https://prismjs.com/) (Tomorrow Theme).
+* **Code Formatting**: [js-beautify](https://github.com/beautify-web/js-beautify).
+* **Client-side Compression**: [JSZip](https://stuk.github.io/jszip/) & [FileSaver.js](https://github.com/eligrey/FileSaver.js).
+* **Mobile Runtime**: [Capacitor 7](https://capacitorjs.com/) (`@capacitor/core`, `@capacitor/filesystem`, `@capacitor/haptics`, `@capacitor/clipboard`).
+* **Desktop Runtime**: [Tauri v2](https://tauri.app/).
+* **CI/CD**: GitHub Actions (`softprops/action-gh-release`).
+
+---
+
+## 📱 Cara Menggunakan (Usage)
+
+1. **Jalankan Aplikasi** (via browser, Android APK, atau desktop).
+2. **Masukkan URL Website Target** (misal: `https://github.com` atau `https://wikipedia.org`).
+3. Tekan **Dapatkan Source Code** ⚡.
+4. Pilih Tab Inspector yang Anda butuhkan:
+   * 📊 **Overview**: Ringkasan ukuran file dan metadata SEO.
+   * 📄 **HTML Code**: Melihat & menyalin kode HTML terformat.
+   * ⚡ **Scripts JS**: Memeriksa seluruh skrip JavaScript target.
+   * 🎨 **Styles CSS**: Memeriksa seluruh file CSS stylesheet target.
+   * 🖼️ **Media**: Melihat daftar gambar & icon yang digunakan.
+   * 👁️ **Live Preview**: Pratinjau responsif halaman website.
+   * 📥 **Download Center**: Unduh file ZIP lengkap ke direktori Download.
+
+---
+
+## 📦 Download Compiled Binaries (APK / EXE)
+
+Anda dapat mengunduh hasil build siap pakai (Android APK & Windows Setup) langsung di halaman **[GitHub Releases](https://github.com/berusigma/GetSource-Code/releases)**.
+
+---
+
+## 🔨 Development & Build Guide
 
 ```bash
-git clone https://github.com/berusigma/capacitor-starter.git nama-aplikasi-kamu
-cd nama-aplikasi-kamu
+# 1. Clone repository
+git clone https://github.com/berusigma/GetSource-Code.git
+cd GetSource-Code
+
+# 2. Install dependencies
 npm install
-```
 
-Langkah 2: Ubah Identitas Aplikasi (Nama & Package ID)
+# 3. Jalankan web lokal
+# Buka file public/index.html di browser atau gunakan server lokal:
+npx serve public
 
-Buka file capacitor.config.json dan sesuaikan dengan data aplikasimu:
+# 4. Sync platform mobile (Capacitor)
+npm run cap:sync
 
-```json
-{
-  "appId": "com.namakamu.namaplikasi",
-  "appName": "Nama Aplikasi Kamu",
-  "webDir": "public"
-}
-```
-
-Catatan App ID: Gunakan format domain terbalik (reverse domain) agar unik, contoh: com.perusahaan.namaapp.
-
-Langkah 3: Mulai Koding Aplikasi (Folder public/)
-
-Cukup edit 3 file utama ini:
-
-· public/index.html → Tambahkan tombol, input, atau elemen UI lainnya.
-· public/style.css → Ubah warna, font, layout, dan animasi.
-· public/app.js → Tulis logika bisnis, panggil API, atau akses fitur HP.
-
-Langkah 4: Sinkronkan Perubahan ke Folder Native
-
-Setiap selesai mengubah file di public/, jalankan perintah sync:
-
-```bash
-npx cap sync
-```
-
-Perintah ini akan otomatis menyalin seluruh isi public/ ke folder android/ dan ios/ tanpa perlu copy manual.
-
-Langkah 5: Push ke GitHub & Dapatkan APK/IPA Otomatis
-
-Push kode ke repository GitHub:
-
-```bash
-git add .
-git commit -m "feat: Tambah fitur aplikasi baru"
-git push origin main
-```
-
-1. Buka tab Actions di repository GitHub-mu.
-2. Pilih workflow Build Multi-Platform Apps.
-3. GitHub akan menjalankan 2 server virtual sekaligus:
-   · Ubuntu Server → Build APK Android Release (Signed).
-   · macOS Xcode Server → Build proyek iOS untuk Xcode.
-4. Jika status berhasil (centang hijau), klik hasil run dan unduh APK Android serta arsip iOS-nya! 🎉
-
----
-
-🔑 Solusi Eror "Paket Tidak Valid" pada Android
-
-Aplikasi ini sudah dilengkapi dengan Keystore Release Digital Signature bawaan di file android/app/build.gradle:
-
-```groovy
-signingConfigs {
-    release {
-        storeFile file('release.keystore')
-        storePassword 'android123'
-        keyAlias 'rysav'
-        keyPassword 'android123'
-    }
-}
-```
-
-Dengan konfigurasi ini, APK Release yang dihasilkan oleh GitHub Actions sudah 100% bertanda tangan digital sehingga dapat diinstall langsung di semua HP Android tanpa eror "Paket tidak valid".
-
----
-
-📚 Penjelasan Lengkap tentang Library Capacitor
-
-Capacitor adalah runtime modern yang memungkinkan aplikasi web (HTML/CSS/JS) berjalan sebagai aplikasi native di Android dan iOS. Cara kerjanya:
-
-1. WebView menampilkan UI yang kamu buat di public/.
-2. Bridge (Jembatan) menghubungkan JavaScript dengan kode native (Java/Kotlin di Android, Swift/Obj-C di iOS) melalui Plugin.
-3. Plugin adalah modul yang memberi akses ke fitur perangkat keras (kamera, GPS, getaran, dll.) atau fitur sistem (penyimpanan, jaringan, dll.).
-
-Kapabilitas Capacitor terbagi menjadi 3 kategori library:
-
-1. Capacitor Core (Wajib)
-
-Merupakan fondasi utama yang mencakup runtime dan API dasar:
-
-Library Fungsi
-@capacitor/core Runtime utama dan API dasar.
-@capacitor/cli Command Line Interface untuk menjalankan perintah sync, open, dll.
-@capacitor/android Platform Android (Native Wrapper).
-@capacitor/ios Platform iOS (Native Wrapper).
-
-2. Official Plugins (Dikelola oleh Tim Capacitor)
-
-Plugin resmi yang sangat stabil dan terawat untuk fitur HP paling umum:
-
-Plugin Fungsi Instalasi
-Camera Mengambil foto/video dari kamera atau galeri npm install @capacitor/camera
-Geolocation Mendapatkan posisi GPS (latitude/longitude) npm install @capacitor/geolocation
-Filesystem Membaca/menulis file di penyimpanan internal HP npm install @capacitor/filesystem
-Storage Penyimpanan data key-value (mirip LocalStorage tapi persisten) npm install @capacitor/storage
-Haptics Mengaktifkan getaran haptic (efek sentuh) npm install @capacitor/haptics
-Device Mendapatkan info perangkat (model, OS, versi) npm install @capacitor/device
-Network Mendeteksi status koneksi internet (WiFi/Seluler) npm install @capacitor/network
-Share Membuka dialog berbagi (Share Sheet) ke aplikasi lain npm install @capacitor/share
-SplashScreen Mengatur layar splash saat aplikasi dimuat npm install @capacitor/splash-screen
-StatusBar Mengubah warna/tampilan status bar Android/iOS npm install @capacitor/status-bar
-App Mengelola siklus hidup aplikasi (pause/resume) npm install @capacitor/app
-Browser Membuka link di browser eksternal atau internal npm install @capacitor/browser
-Clipboard Baca/tulis teks ke clipboard HP npm install @capacitor/clipboard
-Keyboard Mengatur tampilan keyboard virtual (show/hide) npm install @capacitor/keyboard
-Toast Menampilkan notifikasi pop-up singkat npm install @capacitor/toast
-
-3. Community Plugins (Dikelola oleh Komunitas)
-
-Plugin tambahan untuk kebutuhan lebih spesifik (Firebase, SQLite, Iklan, dll.). Contoh populer:
-
-· @capacitor-community/sqlite → Database SQLite lokal.
-· @capacitor-community/firebase-analytics → Google Analytics.
-· @capacitor-community/facebook-login → Login dengan Facebook.
-· @capacitor-community/admob → Menampilkan iklan AdMob.
-· @capacitor-community/audio → Memutar/merekam audio.
-
----
-
-🔗 Daftar Link Resmi Library Capacitor
-
-Berikut tautan untuk menjelajahi semua plugin yang tersedia:
-
-Sumber Link Keterangan
-Daftar Resmi Plugin Capacitor capacitorjs.com/docs/plugins Direktori resmi semua plugin (Core + Official)
-Capacitor Community GitHub github.com/capacitor-community Koleksi plugin buatan komunitas
-Dokumentasi API Core capacitorjs.com/docs/apis Panduan lengkap setiap API plugin
-Awesome Capacitor github.com/capacitor-community/awesome-capacitor Daftar kurasi plugin, boilerplate, dan tools
-
----
-
-➕ Cara Menambahkan Plugin Native ke Proyek
-
-Jika aplikasi butuh fitur tambahan (misal Kamera & GPS):
-
-```bash
-# 1. Install plugin yang diinginkan
-npm install @capacitor/camera @capacitor/geolocation
-
-# 2. Sinkronkan ke proyek Android & iOS
-npx cap sync
-```
-
-Tips: Setelah sync, jika kamu menjalankan di Android Studio (npx cap open android), plugin akan otomatis terdeteksi. Di iOS, jalankan cd ios && pod install jika diperlukan.
-
----
-
-⚠️ Catatan Penting untuk Scraping (Web Scrape)
-
-Jika Anda berencana menggunakan aplikasi ini untuk web scraping:
-
-· fetch atau axios di public/app.js akan terkena CORS karena berjalan di WebView.
-· Solusi: Gunakan plugin @capacitor/core bawaan yaitu CapacitorHttp yang berjalan di layer native sehingga bebas CORS.
-· Aktifkan di capacitor.config.json:
-  ```json
-  {
-    "plugins": {
-      "CapacitorHttp": { "enabled": true }
-    }
-  }
-  ```
-· Lalu panggil API via import { CapacitorHttp } from '@capacitor/core';
-
----
-
-📄 Lisensi
-
-MIT License © 2026 berusigma
-
----
-
-Dibuat dengan ❤️ oleh berusigma — Selamat berkoding dan berkreasi!
-
+# 5. Build Desktop App (Tauri)
+npm run tauri:build
 ```
 
 ---
+
+## 📜 License
+
+Project ini dilisensikan di bawah **MIT License**. Dibuat dan dikembangkan oleh **[berusigma](https://github.com/berusigma)**.
