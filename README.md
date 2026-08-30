@@ -22,7 +22,7 @@
 
 ## 🚀 Key Features (Fitur Utama)
 
-* 🎨 **Desain Ultra Premium (Putih & Biru)**: Antarmuka modern, bersih, glassmorphism dengan mikro-animasi dan *dark-navy code inspector pane*.
+* 🎨 **Desain Neo-Brutalism Ultra Premium (Putih & Biru)**: Antarmuka *bold*, garis tepi tegas, *hard drop shadows*, dan tombol pop taktil interaktif.
 * 🌐 **Full Source Code Extraction**:
   * 📄 **HTML Code**: Terformat rapi (*beautified*) dengan *syntax highlighting* PrismJS, pencarian baris kode, dan opsi *wrap lines*.
   * ⚡ **JavaScript (.JS)**: Mendeteksi *inline scripts* maupun file external `<script src="...">` secara otomatis.

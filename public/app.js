@@ -1,6 +1,6 @@
 /**
  * RSOURCE - Ultra Website Source Code Extractor & Inspector
- * Core JavaScript Logic
+ * Neo-Brutalism Edition & Enhanced Download Engine
  */
 
 // State Management
@@ -11,8 +11,8 @@ const state = {
   htmlFormatted: '',
   title: '',
   metadata: {},
-  scripts: [], // { type: 'inline'|'external', url: string, content: string, name: string }
-  styles: [],   // { type: 'inline'|'external', url: string, content: string, name: string }
+  scripts: [], // { type: 'inline'|'external', url: string, content: string, name: string, fetched: boolean }
+  styles: [],   // { type: 'inline'|'external', url: string, content: string, name: string, fetched: boolean }
   media: [],    // { type: 'img'|'svg'|'icon', url: string, name: string }
   linksCount: 0,
   activeJsIndex: 0,
@@ -92,14 +92,14 @@ const elements = {
   searchHtmlInput: document.getElementById('searchHtml')
 };
 
-// Helper: Haptic Feedback (Capacitor Native Support)
+// Helper: Haptic Feedback
 async function triggerHaptic() {
   try {
     if (window.Capacitor && window.Capacitor.isPluginAvailable("Haptics")) {
-      await window.Capacitor.Plugins.Haptics.impact({ style: "LIGHT" });
+      await window.Capacitor.Plugins.Haptics.impact({ style: "HEAVY" });
     }
   } catch (e) {
-    // Ignore in standard web browsers
+    // Ignore in browser
   }
 }
 
@@ -118,10 +118,10 @@ function showToast(message, type = 'info') {
     toast.style.opacity = '0';
     toast.style.transform = 'translateY(20px)';
     setTimeout(() => toast.remove(), 300);
-  }, 3500);
+  }, 4000);
 }
 
-// Helper: Format Bytes to KB/MB
+// Helper: Format Bytes
 function formatBytes(bytes) {
   if (!bytes || bytes === 0) return '0 B';
   const k = 1024;
@@ -140,7 +140,7 @@ function normalizeUrl(input) {
   return url;
 }
 
-// Helper: Resolve Relative to Absolute URL
+// Helper: Resolve Absolute URL
 function resolveAbsoluteUrl(relative, base) {
   try {
     return new URL(relative, base).href;
@@ -152,20 +152,17 @@ function resolveAbsoluteUrl(relative, base) {
 // Helper: CORS Proxy Fetcher
 async function fetchWithProxy(targetUrl, selectedProxy) {
   const startTime = performance.now();
-  let proxyUrl = '';
-  
-  // Capacitor Native Http check
+
   if (window.Capacitor && window.Capacitor.isPluginAvailable("CapacitorHttp")) {
     try {
       const response = await window.Capacitor.Plugins.CapacitorHttp.get({ url: targetUrl });
       const duration = Math.round(performance.now() - startTime);
       return { html: response.data, status: response.status || 200, duration, proxyUsed: 'Capacitor Native Http' };
     } catch (err) {
-      console.warn("CapacitorHttp failed, falling back to web proxies...", err);
+      console.warn("CapacitorHttp failed, using web proxies fallback...", err);
     }
   }
 
-  // Web Proxies Fallback Sequence
   const proxyList = [];
   if (selectedProxy === 'allorigins') {
     proxyList.push(`https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`);
@@ -176,7 +173,6 @@ async function fetchWithProxy(targetUrl, selectedProxy) {
   } else if (selectedProxy === 'direct') {
     proxyList.push(targetUrl);
   } else {
-    // Auto Mode: try allorigins, then corsproxy, then codetabs, then direct
     proxyList.push(
       `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`,
       `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`,
@@ -202,7 +198,7 @@ async function fetchWithProxy(targetUrl, selectedProxy) {
   throw new Error(lastError ? lastError.message : 'Gagal mengakses URL melalui proxy.');
 }
 
-// MAIN EXTRACTION FUNCTION
+// MAIN EXTRACTION ENGINE
 async function extractWebsiteSource(rawUrl) {
   const targetUrl = normalizeUrl(rawUrl);
   if (!targetUrl) {
@@ -217,14 +213,13 @@ async function extractWebsiteSource(rawUrl) {
     state.parsedDomain = 'website';
   }
 
-  // Update UI Loading State
   state.isFetching = true;
   elements.btnFetch.disabled = true;
   elements.btnFetch.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> <span>Extracting...</span>';
   
   elements.statusBanner.className = 'status-banner loading';
   elements.statusIcon.className = 'fa-solid fa-circle-notch fa-spin';
-  elements.statusMessage.innerText = `Sedang mengambil source code dari ${state.parsedDomain}...`;
+  elements.statusMessage.innerText = `Sedang mengekstrak source code ${state.parsedDomain}...`;
   elements.statusTags.innerHTML = '';
 
   triggerHaptic();
@@ -235,14 +230,11 @@ async function extractWebsiteSource(rawUrl) {
     
     state.htmlRaw = fetchResult.html;
 
-    // Parse HTML DOM
     const parser = new DOMParser();
     const doc = parser.parseFromString(state.htmlRaw, 'text/html');
 
-    // Extract Page Title
     state.title = doc.title || state.parsedDomain;
 
-    // Extract Metadata
     state.metadata = {
       description: doc.querySelector('meta[name="description"]')?.content || doc.querySelector('meta[property="og:description"]')?.content || 'Tidak ada deskripsi meta.',
       keywords: doc.querySelector('meta[name="keywords"]')?.content || '-',
@@ -250,7 +242,6 @@ async function extractWebsiteSource(rawUrl) {
       favicon: doc.querySelector('link[rel*="icon"]')?.href || resolveAbsoluteUrl('/favicon.ico', targetUrl)
     };
 
-    // Count Links
     state.linksCount = doc.querySelectorAll('a[href]').length;
 
     // Extract Scripts
@@ -268,7 +259,7 @@ async function extractWebsiteSource(rawUrl) {
           type: 'external',
           url: absSrc,
           name: fileName,
-          content: `// Source code external script:\n// ${absSrc}\n\n// Klik tombol Beautify / Download untuk mengambil skrip lengkap.`,
+          content: `// External Script URL: ${absSrc}\n// Klik tab untuk mengambil isi skrip lengkap.`,
           fetched: false
         });
       } else if (el.textContent.trim()) {
@@ -298,7 +289,7 @@ async function extractWebsiteSource(rawUrl) {
           type: 'external',
           url: absHref,
           name: fileName,
-          content: `/* External Stylesheet:\n * ${absHref}\n */`,
+          content: `/* External Stylesheet URL: ${absHref} */`,
           fetched: false
         });
       }
@@ -317,7 +308,7 @@ async function extractWebsiteSource(rawUrl) {
       }
     }
 
-    // Extract Media & Assets
+    // Extract Media Assets
     state.media = [];
     const imgElements = doc.querySelectorAll('img[src]');
     imgElements.forEach((img, idx) => {
@@ -338,24 +329,24 @@ async function extractWebsiteSource(rawUrl) {
       state.media.unshift({ type: 'icon', url: state.metadata.favicon, name: 'Favicon Icon' });
     }
 
-    // Update Status Banner to Success
+    // Update Status Banner
     elements.statusBanner.className = 'status-banner success';
     elements.statusIcon.className = 'fa-solid fa-circle-check';
-    elements.statusMessage.innerText = `Berhasil mengekstrak ${state.parsedDomain}!`;
+    elements.statusMessage.innerText = `Berhasil mengekstrak source code ${state.parsedDomain}!`;
     elements.statusTags.innerHTML = `
       <span class="status-tag">Status 200 OK</span>
       <span class="status-tag">${fetchResult.duration} ms</span>
       <span class="status-tag">${formatBytes(state.htmlRaw.length)}</span>
     `;
 
-    // Format HTML Code
+    // Format HTML
     if (window.html_beautify) {
       state.htmlFormatted = window.html_beautify(state.htmlRaw, { indent_size: 2 });
     } else {
       state.htmlFormatted = state.htmlRaw;
     }
 
-    // Render All Inspector Tabs
+    // Render UI Tabs
     renderOverviewTab();
     renderHtmlTab();
     renderScriptsTab();
@@ -363,7 +354,6 @@ async function extractWebsiteSource(rawUrl) {
     renderMediaTab();
     renderLivePreview();
 
-    // Show Inspector Card
     elements.inspectorCard.classList.add('active');
     elements.inspectorCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
@@ -373,7 +363,7 @@ async function extractWebsiteSource(rawUrl) {
     console.error("Extraction error:", error);
     elements.statusBanner.className = 'status-banner error';
     elements.statusIcon.className = 'fa-solid fa-circle-exclamation';
-    elements.statusMessage.innerText = `Gagal mengekstrak: ${error.message || 'CORS restriction or network error.'}`;
+    elements.statusMessage.innerText = `Gagal mengekstrak: ${error.message}`;
     showToast(`Gagal: ${error.message}`, 'error');
   } finally {
     state.isFetching = false;
@@ -382,7 +372,7 @@ async function extractWebsiteSource(rawUrl) {
   }
 }
 
-// RENDER TAB 1: OVERVIEW
+// TAB 1: OVERVIEW
 function renderOverviewTab() {
   elements.badgeHtml.innerText = formatBytes(state.htmlRaw.length);
   elements.badgeScripts.innerText = state.scripts.length;
@@ -401,7 +391,7 @@ function renderOverviewTab() {
   elements.metaLinksCount.innerText = `${state.linksCount} link terdeteksi`;
 }
 
-// RENDER TAB 2: HTML
+// TAB 2: HTML
 function renderHtmlTab() {
   elements.htmlCodeViewer.textContent = state.htmlFormatted;
   if (window.Prism) {
@@ -409,12 +399,12 @@ function renderHtmlTab() {
   }
 }
 
-// RENDER TAB 3: SCRIPTS JS
+// TAB 3: SCRIPTS JS
 function renderScriptsTab() {
   elements.jsListContainer.innerHTML = '';
   
   if (state.scripts.length === 0) {
-    elements.jsListContainer.innerHTML = '<p style="font-size: 0.8rem; color: var(--text-muted); padding: 10px;">Tidak ada script terdeteksi.</p>';
+    elements.jsListContainer.innerHTML = '<p style="font-size: 0.85rem; color: var(--text-muted); padding: 10px;">Tidak ada script terdeteksi.</p>';
     elements.jsCodeViewer.textContent = '// Tidak ada file JS';
     return;
   }
@@ -426,7 +416,7 @@ function renderScriptsTab() {
       <span>${item.name}</span>
       <div class="res-meta">
         <span>${item.type === 'inline' ? 'Inline Script' : 'External JS'}</span>
-        <span>${item.type === 'inline' ? formatBytes(item.content.length) : 'Fetch on view'}</span>
+        <span>${item.type === 'inline' ? formatBytes(item.content.length) : 'Fetch on click'}</span>
       </div>
     `;
     div.addEventListener('click', () => selectJsScript(idx));
@@ -441,13 +431,11 @@ async function selectJsScript(index) {
   const item = state.scripts[index];
   if (!item) return;
 
-  // Highlight active sidebar item
   const items = elements.jsListContainer.querySelectorAll('.resource-item');
   items.forEach((el, idx) => el.classList.toggle('active', idx === index));
 
   elements.jsSelectedTitle.innerText = item.name;
 
-  // Fetch external script content if not fetched yet
   if (item.type === 'external' && !item.fetched) {
     elements.jsCodeViewer.textContent = `// Sedang mengunduh isi ${item.url}...`;
     try {
@@ -465,12 +453,12 @@ async function selectJsScript(index) {
   }
 }
 
-// RENDER TAB 4: STYLES CSS
+// TAB 4: STYLES CSS
 function renderStylesTab() {
   elements.cssListContainer.innerHTML = '';
 
   if (state.styles.length === 0) {
-    elements.cssListContainer.innerHTML = '<p style="font-size: 0.8rem; color: var(--text-muted); padding: 10px;">Tidak ada stylesheet terdeteksi.</p>';
+    elements.cssListContainer.innerHTML = '<p style="font-size: 0.85rem; color: var(--text-muted); padding: 10px;">Tidak ada stylesheet terdeteksi.</p>';
     elements.cssCodeViewer.textContent = '/* Tidak ada file CSS */';
     return;
   }
@@ -482,7 +470,7 @@ function renderStylesTab() {
       <span>${item.name}</span>
       <div class="res-meta">
         <span>${item.type === 'inline' ? 'Inline Style' : 'External CSS'}</span>
-        <span>${item.type === 'inline' ? formatBytes(item.content.length) : 'Fetch on view'}</span>
+        <span>${item.type === 'inline' ? formatBytes(item.content.length) : 'Fetch on click'}</span>
       </div>
     `;
     div.addEventListener('click', () => selectCssStyle(idx));
@@ -519,7 +507,7 @@ async function selectCssStyle(index) {
   }
 }
 
-// RENDER TAB 5: MEDIA & ASSETS
+// TAB 5: MEDIA & ASSETS
 function renderMediaTab(filter = 'all') {
   elements.assetGridContainer.innerHTML = '';
 
@@ -542,7 +530,7 @@ function renderMediaTab(filter = 'all') {
     
     let previewHtml = '';
     if (item.type === 'svg') {
-      previewHtml = `<div class="asset-preview-box"><i class="fa-solid fa-code-branch" style="font-size:2rem; color:var(--primary-600);"></i></div>`;
+      previewHtml = `<div class="asset-preview-box"><i class="fa-solid fa-code-branch" style="font-size:2rem; color:var(--primary-blue);"></i></div>`;
     } else {
       previewHtml = `<div class="asset-preview-box"><img src="${item.url}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/150?text=Image+Error'" /></div>`;
     }
@@ -561,64 +549,104 @@ function renderMediaTab(filter = 'all') {
 
     card.querySelector('.btn-copy-url').addEventListener('click', (e) => {
       const urlToCopy = e.currentTarget.getAttribute('data-url');
-      copyToClipboard(urlToCopy, 'Link asset berhasil disalin!');
+      copyToClipboard(urlToCopy, 'Link asset disalin!');
     });
 
     elements.assetGridContainer.appendChild(card);
   });
 }
 
-// RENDER TAB 6: LIVE PREVIEW
+// TAB 6: LIVE PREVIEW OF EXTRACTED SOURCE CODE
 function renderLivePreview() {
   if (!state.htmlRaw) return;
-  
-  // Set iframe srcdoc with base URL injected so images/links resolve correctly
+
+  // Build a clean, self-contained HTML representation of the extracted source code
   const baseTag = `<base href="${state.targetUrl}">`;
-  let parsedHtml = state.htmlRaw;
-  if (!parsedHtml.includes('<base')) {
-    parsedHtml = parsedHtml.replace('<head>', `<head>${baseTag}`);
+  let liveDoc = state.htmlRaw;
+  
+  if (!liveDoc.includes('<base')) {
+    liveDoc = liveDoc.replace(/<head>/i, `<head>${baseTag}`);
   }
 
-  elements.previewIframe.srcdoc = parsedHtml;
+  // Inject extracted inline CSS styles directly into head
+  let cssInjections = '';
+  state.styles.forEach(st => {
+    if (st.content && !st.content.startsWith('/* External')) {
+      cssInjections += `<style>\n${st.content}\n</style>\n`;
+    }
+  });
+
+  if (cssInjections) {
+    liveDoc = liveDoc.replace(/<\/head>/i, `${cssInjections}</head>`);
+  }
+
+  elements.previewIframe.srcdoc = liveDoc;
 }
 
-// DOWNLOAD SYSTEM (AUTOMATIC DOWNLOAD TO DOWNLOADS DIRECTORY)
-async function downloadFile(content, filename, mimeType = 'text/plain') {
+// ENHANCED DOWNLOAD ENGINE (WITH NATIVE DIRECTORY /sdcard/Download/Rsource SUPPORT)
+async function downloadFileNativeOrWeb(fileName, base64Content, blobContent, mimeType) {
   triggerHaptic();
 
-  // Capacitor Native Filesystem Write check
+  let savedPath = '';
+
+  // 1. Try Capacitor Native Filesystem Write to Rsource folder
   if (window.Capacitor && window.Capacitor.isPluginAvailable("Filesystem")) {
     try {
       const { Filesystem, Directory } = window.Capacitor.Plugins;
-      await Filesystem.writeFile({
-        path: filename,
-        data: content,
-        directory: Directory.Documents || Directory.Cache
+      
+      // Ensure Rsource directory exists
+      try {
+        await Filesystem.mkdir({
+          path: 'Rsource',
+          directory: Directory.Documents || Directory.ExternalStorage,
+          recursive: true
+        });
+      } catch (e) {
+        // Directory might already exist
+      }
+
+      const fileResult = await Filesystem.writeFile({
+        path: `Rsource/${fileName}`,
+        data: base64Content,
+        directory: Directory.Documents || Directory.ExternalStorage,
+        recursive: true
       });
-      showToast(`⚡ Tersimpan di perangkat native: ${filename}`, 'success');
+
+      savedPath = fileResult.uri || `/sdcard/Download/Rsource/${fileName}`;
+      showToast(`📁 Saved to /sdcard/Download/Rsource/${fileName}`, 'success');
+
+      // Optionally share/open if Share plugin available
+      if (window.Capacitor.isPluginAvailable("Share")) {
+        try {
+          await window.Capacitor.Plugins.Share.share({
+            title: `Download ${fileName}`,
+            url: fileResult.uri
+          });
+        } catch (e) {}
+      }
       return;
-    } catch (e) {
-      console.warn("Native filesystem download fallback to Blob...", e);
+    } catch (err) {
+      console.warn("Capacitor Filesystem write error, falling back to Web auto download...", err);
     }
   }
 
-  // Web Browser Standard Auto Download Trigger
-  const blob = new Blob([content], { type: mimeType });
-  if (window.saveAs) {
-    window.saveAs(blob, filename);
-  } else {
+  // 2. Web Browser Standard Auto Download Trigger
+  if (window.saveAs && blobContent) {
+    window.saveAs(blobContent, fileName);
+  } else if (blobContent) {
     const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = filename;
+    link.href = URL.createObjectURL(blobContent);
+    link.download = fileName;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(link.href);
   }
-  showToast(`📥 ${filename} berhasil di-download otomatis!`, 'success');
+
+  showToast(`📥 ${fileName} berhasil di-download! Check folder Download.`, 'success');
 }
 
-// DOWNLOAD FULL ZIP PACKAGE
+// DOWNLOAD FULL ZIP PACKAGE ENGINE
 async function downloadFullZip() {
   if (!state.htmlRaw) {
     showToast('Silakan extract website terlebih dahulu!', 'error');
@@ -643,7 +671,7 @@ async function downloadFullZip() {
   // 1. Add index.html
   root.file('index.html', state.htmlFormatted || state.htmlRaw);
 
-  // 2. Add JS Scripts Folder
+  // 2. Fetch & Add JS Scripts
   const jsFolder = root.folder('scripts');
   for (let i = 0; i < state.scripts.length; i++) {
     const s = state.scripts[i];
@@ -660,7 +688,7 @@ async function downloadFullZip() {
     jsFolder.file(jsName, s.content);
   }
 
-  // 3. Add CSS Stylesheets Folder
+  // 3. Fetch & Add CSS Stylesheets
   const cssFolder = root.folder('styles');
   for (let i = 0; i < state.styles.length; i++) {
     const st = state.styles[i];
@@ -677,10 +705,10 @@ async function downloadFullZip() {
     cssFolder.file(cssName, st.content);
   }
 
-  // 4. Add Metadata JSON Report
+  // 4. Add Report JSON
   const report = {
     app: 'RSource Website Source Code Extractor',
-    version: '2.5 PRO',
+    version: '2.5 PRO Neo-Brutalism',
     extractedAt: new Date().toLocaleString('id-ID'),
     targetUrl: state.targetUrl,
     domain: state.parsedDomain,
@@ -691,33 +719,20 @@ async function downloadFullZip() {
       scriptsCount: state.scripts.length,
       stylesCount: state.styles.length,
       mediaCount: state.media.length
-    },
-    scriptsList: state.scripts.map(s => ({ name: s.name, type: s.type, url: s.url })),
-    stylesList: state.styles.map(s => ({ name: s.name, type: s.type, url: s.url })),
-    mediaList: state.media.map(m => ({ name: m.name, type: m.type, url: m.url }))
+    }
   };
 
   root.file('metadata.json', JSON.stringify(report, null, 2));
 
-  // Generate ZIP Blob
-  const content = await zip.generateAsync({ type: 'blob' });
+  // Generate Base64 & Blob ZIP formats
+  const base64Zip = await zip.generateAsync({ type: 'base64' });
+  const blobZip = await zip.generateAsync({ type: 'blob' });
   const zipFileName = `${folderName}.zip`;
 
-  if (window.saveAs) {
-    window.saveAs(content, zipFileName);
-  } else {
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(content);
-    link.download = zipFileName;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }
-
-  showToast(`🎉 ZIP ${zipFileName} berhasil didownload!`, 'success');
+  await downloadFileNativeOrWeb(zipFileName, base64Zip, blobZip, 'application/zip');
 }
 
-// COPY TO CLIPBOARD HELPER
+// COPY TO CLIPBOARD
 async function copyToClipboard(text, successMsg = 'Berhasil disalin ke clipboard!') {
   try {
     if (window.Capacitor && window.Capacitor.isPluginAvailable("Clipboard")) {
@@ -732,16 +747,14 @@ async function copyToClipboard(text, successMsg = 'Berhasil disalin ke clipboard
   }
 }
 
-// EVENT LISTENERS INITIALIZATION
+// INITIALIZE EVENT LISTENERS
 function initEventListeners() {
 
-  // Fetch Form Submit
   elements.fetchForm.addEventListener('submit', (e) => {
     e.preventDefault();
     extractWebsiteSource(elements.urlInput.value);
   });
 
-  // Paste Button
   elements.btnPaste.addEventListener('click', async () => {
     try {
       let text = '';
@@ -760,13 +773,11 @@ function initEventListeners() {
     }
   });
 
-  // Clear Input Button
   elements.btnClear.addEventListener('click', () => {
     elements.urlInput.value = '';
     elements.urlInput.focus();
   });
 
-  // Preset Chips
   document.querySelectorAll('.preset-chip').forEach(chip => {
     chip.addEventListener('click', () => {
       const url = chip.getAttribute('data-url');
@@ -775,7 +786,6 @@ function initEventListeners() {
     });
   });
 
-  // Tab Switching
   elements.tabBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       const tabTarget = btn.getAttribute('data-tab');
@@ -790,11 +800,9 @@ function initEventListeners() {
     });
   });
 
-  // Quick Action Buttons
   elements.btnQuickZip.addEventListener('click', downloadFullZip);
   elements.btnQuickCopyHtml.addEventListener('click', () => copyToClipboard(state.htmlFormatted, 'HTML Source Code disalin!'));
 
-  // HTML Actions
   elements.btnFormatHtml.addEventListener('click', () => {
     if (window.html_beautify) {
       state.htmlFormatted = window.html_beautify(state.htmlRaw, { indent_size: 2 });
@@ -810,9 +818,15 @@ function initEventListeners() {
   });
 
   elements.btnCopyHtml.addEventListener('click', () => copyToClipboard(state.htmlFormatted, 'HTML disalin!'));
-  elements.btnDownloadHtml.addEventListener('click', () => downloadFile(state.htmlFormatted, `${state.parsedDomain}_index.html`, 'text/html'));
+  
+  elements.btnDownloadHtml.addEventListener('click', async () => {
+    const fileName = `${state.parsedDomain}_index.html`;
+    const content = state.htmlFormatted || state.htmlRaw;
+    const base64 = btoa(unescape(encodeURIComponent(content)));
+    const blob = new Blob([content], { type: 'text/html' });
+    await downloadFileNativeOrWeb(fileName, base64, blob, 'text/html');
+  });
 
-  // JS Actions
   elements.btnFormatJs.addEventListener('click', () => {
     const item = state.scripts[state.activeJsIndex];
     if (item && item.content && window.js_beautify) {
@@ -828,12 +842,16 @@ function initEventListeners() {
     if (item) copyToClipboard(item.content, `Script ${item.name} disalin!`);
   });
 
-  elements.btnDownloadJs.addEventListener('click', () => {
+  elements.btnDownloadJs.addEventListener('click', async () => {
     const item = state.scripts[state.activeJsIndex];
-    if (item) downloadFile(item.content, item.name.endsWith('.js') ? item.name : `${item.name}.js`, 'application/javascript');
+    if (item) {
+      const fileName = item.name.endsWith('.js') ? item.name : `${item.name}.js`;
+      const base64 = btoa(unescape(encodeURIComponent(item.content)));
+      const blob = new Blob([item.content], { type: 'application/javascript' });
+      await downloadFileNativeOrWeb(fileName, base64, blob, 'application/javascript');
+    }
   });
 
-  // CSS Actions
   elements.btnFormatCss.addEventListener('click', () => {
     const item = state.styles[state.activeCssIndex];
     if (item && item.content && window.css_beautify) {
@@ -849,12 +867,16 @@ function initEventListeners() {
     if (item) copyToClipboard(item.content, `Stylesheet ${item.name} disalin!`);
   });
 
-  elements.btnDownloadCss.addEventListener('click', () => {
+  elements.btnDownloadCss.addEventListener('click', async () => {
     const item = state.styles[state.activeCssIndex];
-    if (item) downloadFile(item.content, item.name.endsWith('.css') ? item.name : `${item.name}.css`, 'text/css');
+    if (item) {
+      const fileName = item.name.endsWith('.css') ? item.name : `${item.name}.css`;
+      const base64 = btoa(unescape(encodeURIComponent(item.content)));
+      const blob = new Blob([item.content], { type: 'text/css' });
+      await downloadFileNativeOrWeb(fileName, base64, blob, 'text/css');
+    }
   });
 
-  // Asset Filter Buttons
   document.querySelectorAll('.asset-filters .btn-xs').forEach(btn => {
     btn.addEventListener('click', (e) => {
       document.querySelectorAll('.asset-filters .btn-xs').forEach(b => b.classList.remove('active'));
@@ -864,7 +886,6 @@ function initEventListeners() {
     });
   });
 
-  // Live Preview Viewport Buttons
   document.querySelectorAll('.vp-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.vp-btn').forEach(b => b.classList.remove('active'));
@@ -879,16 +900,25 @@ function initEventListeners() {
     if (state.targetUrl) window.open(state.targetUrl, '_blank');
   });
 
-  // Download Center Actions
   elements.btnDownloadZipFull.addEventListener('click', downloadFullZip);
-  elements.btnDlHtmlOnly.addEventListener('click', () => downloadFile(state.htmlFormatted, `${state.parsedDomain}_index.html`, 'text/html'));
+  
+  elements.btnDlHtmlOnly.addEventListener('click', async () => {
+    const fileName = `${state.parsedDomain}_index.html`;
+    const content = state.htmlFormatted || state.htmlRaw;
+    const base64 = btoa(unescape(encodeURIComponent(content)));
+    const blob = new Blob([content], { type: 'text/html' });
+    await downloadFileNativeOrWeb(fileName, base64, blob, 'text/html');
+  });
   
   elements.btnDlJsBundle.addEventListener('click', async () => {
     let combinedJs = `// Combined JavaScript Bundle from ${state.targetUrl}\n\n`;
     for (const s of state.scripts) {
       combinedJs += `/* =================== ${s.name} =================== */\n${s.content}\n\n`;
     }
-    downloadFile(combinedJs, `${state.parsedDomain}_bundle.js`, 'application/javascript');
+    const fileName = `${state.parsedDomain}_bundle.js`;
+    const base64 = btoa(unescape(encodeURIComponent(combinedJs)));
+    const blob = new Blob([combinedJs], { type: 'application/javascript' });
+    await downloadFileNativeOrWeb(fileName, base64, blob, 'application/javascript');
   });
 
   elements.btnDlCssBundle.addEventListener('click', async () => {
@@ -896,10 +926,12 @@ function initEventListeners() {
     for (const st of state.styles) {
       combinedCss += `/* =================== ${st.name} =================== */\n${st.content}\n\n`;
     }
-    downloadFile(combinedCss, `${state.parsedDomain}_bundle.css`, 'text/css');
+    const fileName = `${state.parsedDomain}_bundle.css`;
+    const base64 = btoa(unescape(encodeURIComponent(combinedCss)));
+    const blob = new Blob([combinedCss], { type: 'text/css' });
+    await downloadFileNativeOrWeb(fileName, base64, blob, 'text/css');
   });
 
-  // Search within HTML Code
   elements.searchHtmlInput.addEventListener('input', (e) => {
     const query = e.target.value.toLowerCase();
     if (!query) {
@@ -916,7 +948,6 @@ function initEventListeners() {
 // APP INITIALIZATION
 document.addEventListener('DOMContentLoaded', () => {
   initEventListeners();
-  // Auto-extract default preset URL on launch for immediate WOW demo!
   const defaultUrl = 'https://wikipedia.org';
   elements.urlInput.value = defaultUrl;
   extractWebsiteSource(defaultUrl);
